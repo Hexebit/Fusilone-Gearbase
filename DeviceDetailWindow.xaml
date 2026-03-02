@@ -48,6 +48,12 @@
                         <TextBox x:Name="BrandBox" Text="Marka" FontSize="18" Opacity="0.8" IsReadOnly="True" BorderThickness="0" Margin="0,0,5,0"/>
                         <TextBox x:Name="ModelBox" Text="Model" FontSize="18" Opacity="0.8" IsReadOnly="True" BorderThickness="0"/>
                     </StackPanel>
+                    <TextBlock x:Name="CreatedDateText" Text="Sisteme eklenme: 01.01.2024" FontSize="11" Opacity="0.5" Margin="0,5,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource Detail_WarrantyStatus}" FontSize="11" FontWeight="Bold" Opacity="0.6" VerticalAlignment="Center"/>
+                        <materialDesign:Chip x:Name="WarrantyStatusChip" Content="-" Margin="8,0,0,0" Height="24" FontSize="11" FontWeight="Bold"/>
+                        <TextBlock x:Name="WarrantyEndDateText" Text="" Margin="8,0,0,0" FontSize="11" Opacity="0.7" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -157,6 +163,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 
                                 <Grid>
@@ -191,8 +198,26 @@
                                     </StackPanel>
                                 </Grid>
                                 
+                                <!-- Tarihler -->
+                                <Border Grid.Row="1" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0" Margin="0,15,0,0" Padding="0,15,0,15">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{DynamicResource Detail_ManufactureDate}" FontSize="10" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="ManufactureDateText" Text="01.01.2024" FontSize="14"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{DynamicResource Detail_PurchaseDateInfo}" FontSize="10" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="PurchaseDateText" Text="01.01.2024" FontSize="14"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                
                                 <!-- Ekstralar / Notlar -->
-                                <Border Grid.Row="1" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0" Margin="0,15,0,0" Padding="0,15,0,0">
+                                <Border Grid.Row="2" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0" Margin="0,0,0,0" Padding="0,15,0,0">
                                     <StackPanel>
                                         <TextBlock Text="{DynamicResource Detail_Notes}" FontSize="11" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,8"/>
                                         <TextBox x:Name="NotesBox" 

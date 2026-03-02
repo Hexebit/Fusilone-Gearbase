@@ -15,6 +15,9 @@ public class Device
     public decimal Cost { get; set; } // Satın Alım Fiyatı
     public string Status { get; set; } = "Aktif"; // Aktif, Pasif, Hurda, Arızalı, Kayıp
     public DateTime PurchaseDate { get; set; } = DateTime.Now;
+    public DateTime ManufactureDate { get; set; } = DateTime.Now; // Üretim Tarihi
+    public DateTime CreatedDate { get; set; } = DateTime.Now; // Sisteme Eklenme Tarihi
+    public int WarrantyPeriodMonths { get; set; } = 24; // Garanti Süresi (Ay)
     public string ImageUrl { get; set; } = string.Empty;
     public string DeviceName { get; set; } = string.Empty; // Cihaz Adı / Takma Ad
     public string OwnerName { get; set; } = string.Empty;  // Sahibi / Zimmetli Kişi

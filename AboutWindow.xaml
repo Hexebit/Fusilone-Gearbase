@@ -67,47 +67,16 @@
                         
                         <materialDesign:Card Padding="15" Background="{DynamicResource MaterialDesignCardBackground}" Margin="0,0,0,15">
                             <StackPanel>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Tasarım İyileştirmeleri:</Bold> Uygulama üzerinde çeşitli görsel iyileştirmeler ve yazılım optimizasyonları yapıldı. Karanlık ve Aydınlık temada oluşan farklı font ve görünüm hataları düzenlendi, cihaz ayrıntıları sekmesinin büyük olma sorunu giderildi.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Dil Desteği:</Bold> İngilizce dil desteği aktifleştirildi. Artık Fusilone uygulaması cihazınızın kendi dilini algılayıp otomatik olarak o dilde açılabiliyor.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Ayrıntılı Arama Özelliği:</Bold> Artık sadece RAM Boyutu ya da İşlemci Modeli gibi spesifik aramalar yapılabiliyor.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Cihaz Güncelleme Detaylandırıldı:</Bold> Artık bir cihazın donanımını güncellediğinizde, bakımlar kısmında otomatik olarak eklenmekte ve QR Koda işlenmekte. Ayrıca donanım ekleme/çıkarma işlemleri için yeni bir arayüz oluşturuldu.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>QR Kod Güncellendi:</Bold> Artık oluşturulan QR Kodlar 1050x600 çözünürlüğünde ve yerleşimleri optimize edildi. Böylece bakım notlarının sığmama sorunu düzeltildi.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Oyun Konsolu Kategorisi:</Bold> Artık cihazlarınıza oyun konsollarını da ekleyebilirsiniz.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Görsel Arama Algoritması Geliştirildi:</Bold> Artık arama sorgusu daha fazla varyasyonla yapılıyor. Bing'de yüksek çözünürlüklü "murl" tercih ediliyor.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Müşteriler Kategorisi:</Bold> Böylece her bir müşterinin e-posta ve telefon numaraları kaydediliyor ve ana sayfada sağ tarafta her bir müşterinin getirdiği tüm cihazlar takip edilebiliyor.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Yedekleme Sistemi:</Bold> Sağ üstten ayarlar butonuna tıklayarak database'in bir yedeğini alabilirsiniz.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Dışa Aktarma Özelliği:</Bold> Tüm cihazların olduğu listeyi .csv ya da .excel dosyası olarak dışa aktarabilirsiniz.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
-                                    • <Bold>Cihaz Silme:</Bold> Önceki sürümde çalışmayan bu özellik düzeltildi ve ikonlar güncellendi.
-                                </TextBlock>
-                                <TextBlock TextWrapping="Wrap">
-                                    • <Bold>Ekstralar Bölümü:</Bold> Her cihaz için "ekstralar" bölümü eklendi. Buraya cihaz hakkındaki ekstra detaylar ve notlar serbest bir şekilde eklenebilir.
-                                </TextBlock>
+                                <TextBlock Text="{DynamicResource About_ReleaseNote1}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <TextBlock Text="{DynamicResource About_ReleaseNote2}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <TextBlock Text="{DynamicResource About_ReleaseNote3}" TextWrapping="Wrap"/>
                             </StackPanel>
                         </materialDesign:Card>
                         
-                        <TextBlock Text="{DynamicResource About_ReleasePrev}" Opacity="0.5" Margin="0,10,0,5" FontSize="12"/>
-                        <TextBlock Text="{DynamicResource About_ReleasePrevDesc}" Opacity="0.5" TextWrapping="Wrap" FontSize="11" Margin="0,0,0,10"/>
+                        <TextBlock Text="{DynamicResource About_ReleasePrev}" Opacity="0.55" Margin="0,10,0,5" FontSize="12"/>
+                        <materialDesign:Card Padding="15" Background="{DynamicResource MaterialDesignCardBackground}" Opacity="0.55" Margin="0,0,0,10">
+                            <TextBlock Text="{DynamicResource About_ReleasePrevDesc}" TextWrapping="Wrap" FontSize="11"/>
+                        </materialDesign:Card>
                         
                         <TextBlock Text="{DynamicResource About_ReleasePrev2}" Opacity="0.5" Margin="0,5,0,5" FontSize="12"/>
                         <TextBlock Text="{DynamicResource About_ReleasePrev2Desc}" Opacity="0.5" TextWrapping="Wrap" FontSize="11"/>

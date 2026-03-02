@@ -103,6 +103,24 @@ public class DatabaseHelper
             alterCmd.ExecuteNonQuery();
         } catch { /* Ignore if exists */ }
 
+        try {
+            var alterCmd = connection.CreateCommand();
+            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN ManufactureDate TEXT DEFAULT '0001-01-01T00:00:00'";
+            alterCmd.ExecuteNonQuery();
+        } catch { /* Ignore if exists */ }
+
+        try {
+            var alterCmd = connection.CreateCommand();
+            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN CreatedDate TEXT DEFAULT '0001-01-01T00:00:00'";
+            alterCmd.ExecuteNonQuery();
+        } catch { /* Ignore if exists */ }
+
+        try {
+            var alterCmd = connection.CreateCommand();
+            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN WarrantyPeriodMonths INTEGER DEFAULT 24";
+            alterCmd.ExecuteNonQuery();
+        } catch { /* Ignore if exists */ }
+
         // Create Customers table
         var customerTableCmd = connection.CreateCommand();
         customerTableCmd.CommandText =
@@ -280,8 +298,8 @@ public class DatabaseHelper
         var command = connection.CreateCommand();
         command.CommandText = 
         @"
-            INSERT INTO Devices (Id, Type, Brand, Model, SerialNumber, TechSpecs, LastMaintenanceDate, MaintenancePeriodMonths, NextMaintenanceDate, Cost, Status, PurchaseDate, ImageUrl, DeviceName, OwnerName, OwnerCustomerId, Notes)
-            VALUES ($id, $type, $brand, $model, $serialNumber, $techSpecs, $lastMaint, $period, $nextMaint, $cost, $status, $purchaseDate, $imageUrl, $deviceName, $ownerName, $ownerCustomerId, $notes);
+            INSERT INTO Devices (Id, Type, Brand, Model, SerialNumber, TechSpecs, LastMaintenanceDate, MaintenancePeriodMonths, NextMaintenanceDate, Cost, Status, PurchaseDate, ImageUrl, DeviceName, OwnerName, OwnerCustomerId, Notes, ManufactureDate, CreatedDate, WarrantyPeriodMonths)
+            VALUES ($id, $type, $brand, $model, $serialNumber, $techSpecs, $lastMaint, $period, $nextMaint, $cost, $status, $purchaseDate, $imageUrl, $deviceName, $ownerName, $ownerCustomerId, $notes, $manufactureDate, $createdDate, $warrantyPeriodMonths);
         ";
         command.Parameters.AddWithValue("$id", device.Id);
         command.Parameters.AddWithValue("$type", device.Type);
@@ -300,6 +318,9 @@ public class DatabaseHelper
         command.Parameters.AddWithValue("$ownerName", device.OwnerName);
         command.Parameters.AddWithValue("$ownerCustomerId", (object?)device.OwnerCustomerId ?? DBNull.Value);
         command.Parameters.AddWithValue("$notes", device.Notes ?? "");
+        command.Parameters.AddWithValue("$manufactureDate", device.ManufactureDate.ToString("o"));
+        command.Parameters.AddWithValue("$createdDate", device.CreatedDate.ToString("o"));
+        command.Parameters.AddWithValue("$warrantyPeriodMonths", device.WarrantyPeriodMonths);
 
         command.ExecuteNonQuery();
     }
@@ -328,7 +349,9 @@ public class DatabaseHelper
                 DeviceName = $deviceName,
                 OwnerName = $ownerName,
                 OwnerCustomerId = $ownerCustomerId,
-                Notes = $notes
+                Notes = $notes,
+                ManufactureDate = $manufactureDate,
+                WarrantyPeriodMonths = $warrantyPeriodMonths
             WHERE Id = $id;
         ";
         command.Parameters.AddWithValue("$id", device.Id);
@@ -348,6 +371,8 @@ public class DatabaseHelper
         command.Parameters.AddWithValue("$ownerName", device.OwnerName);
         command.Parameters.AddWithValue("$ownerCustomerId", (object?)device.OwnerCustomerId ?? DBNull.Value);
         command.Parameters.AddWithValue("$notes", device.Notes ?? "");
+        command.Parameters.AddWithValue("$manufactureDate", device.ManufactureDate.ToString("o"));
+        command.Parameters.AddWithValue("$warrantyPeriodMonths", device.WarrantyPeriodMonths);
 
         command.ExecuteNonQuery();
     }
@@ -417,7 +442,10 @@ public class DatabaseHelper
                 DeviceName = reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetString(13) : "",
                 OwnerName = reader.FieldCount > 14 && !reader.IsDBNull(14) ? reader.GetString(14) : "",
                 OwnerCustomerId = reader.FieldCount > 15 && !reader.IsDBNull(15) ? reader.GetInt32(15) : null,
-                Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : ""
+                Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : "",
+                ManufactureDate = reader.FieldCount > 17 && !reader.IsDBNull(17) ? DateTime.Parse(reader.GetString(17)) : DateTime.MinValue,
+                CreatedDate = reader.FieldCount > 18 && !reader.IsDBNull(18) ? DateTime.Parse(reader.GetString(18)) : DateTime.MinValue,
+                WarrantyPeriodMonths = reader.FieldCount > 19 && !reader.IsDBNull(19) ? reader.GetInt32(19) : 24
             });
         }
 
@@ -582,7 +610,10 @@ public class DatabaseHelper
                 DeviceName = reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetString(13) : "",
                 OwnerName = reader.FieldCount > 14 && !reader.IsDBNull(14) ? reader.GetString(14) : "",
                 OwnerCustomerId = reader.FieldCount > 15 && !reader.IsDBNull(15) ? reader.GetInt32(15) : null,
-                Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : ""
+                Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : "",
+                ManufactureDate = reader.FieldCount > 17 && !reader.IsDBNull(17) ? DateTime.Parse(reader.GetString(17)) : DateTime.MinValue,
+                CreatedDate = reader.FieldCount > 18 && !reader.IsDBNull(18) ? DateTime.Parse(reader.GetString(18)) : DateTime.MinValue,
+                WarrantyPeriodMonths = reader.FieldCount > 19 && !reader.IsDBNull(19) ? reader.GetInt32(19) : 24
             });
         }
 

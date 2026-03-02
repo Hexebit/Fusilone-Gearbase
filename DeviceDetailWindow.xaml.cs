@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.Win32;
 using Fusilone.Data;
 using Fusilone.Models;
@@ -142,6 +143,12 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
         PeriodBox.Text = _device.MaintenancePeriodMonths.ToString();
         LastMaintText.Text = _device.LastMaintenanceDate.ToString("dd.MM.yyyy");
         StatusChip.Content = SpecLocalization.GetStatusDisplayLabel(_device.Status);
+        
+        // Tarih bilgileri
+        CreatedDateText.Text = $"Sisteme eklenme: {_device.CreatedDate.ToString("dd.MM.yyyy HH:mm")}";
+        ManufactureDateText.Text = _device.ManufactureDate.ToString("dd.MM.yyyy");
+        PurchaseDateText.Text = _device.PurchaseDate.ToString("dd.MM.yyyy");
+        UpdateWarrantyStatus();
 
         // Set initial status in combo box
         foreach (ComboBoxItem item in StatusComboBox.Items)
@@ -176,6 +183,39 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
             }
             catch { }
         }
+    }
+
+    private void UpdateWarrantyStatus()
+    {
+        DateTime baseDate = GetWarrantyBaseDate();
+        int warrantyMonths = _device.WarrantyPeriodMonths > 0 ? _device.WarrantyPeriodMonths : 24;
+        DateTime warrantyEndDate = baseDate.AddMonths(warrantyMonths);
+        bool isWarrantyActive = DateTime.Now.Date <= warrantyEndDate.Date;
+
+        WarrantyStatusChip.Content = TryFindResource(isWarrantyActive ? "Warranty_Active" : "Warranty_Expired")?.ToString()
+            ?? (isWarrantyActive ? "Devam Ediyor" : "Bitti");
+
+        var activeBrush = TryFindResource("SuccessColor") as Brush ?? Brushes.ForestGreen;
+        var expiredBrush = TryFindResource("ErrorColor") as Brush ?? Brushes.IndianRed;
+        var foregroundBrush = TryFindResource("MaterialDesignPaper") as Brush ?? Brushes.White;
+
+        WarrantyStatusChip.Background = isWarrantyActive ? activeBrush : expiredBrush;
+        WarrantyStatusChip.Foreground = foregroundBrush;
+        WarrantyEndDateText.Text = $"({TryFindResource("Detail_WarrantyUntil")?.ToString() ?? "Bitiş"}: {warrantyEndDate:dd.MM.yyyy})";
+    }
+
+    private DateTime GetWarrantyBaseDate()
+    {
+        if (_device.PurchaseDate > DateTime.MinValue.AddDays(1))
+            return _device.PurchaseDate;
+
+        if (_device.ManufactureDate > DateTime.MinValue.AddDays(1))
+            return _device.ManufactureDate;
+
+        if (_device.CreatedDate > DateTime.MinValue.AddDays(1))
+            return _device.CreatedDate;
+
+        return DateTime.Now;
     }
 
     private void LoadTechSpecs()

@@ -348,56 +348,65 @@
 
                     <!-- 3. GÖRÜNÜM: YENİ CİHAZ EKLEME -->
                     <materialDesign:TransitioningContent x:Name="AddDeviceTransitioner" Visibility="Collapsed">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <materialDesign:Card Padding="30" Margin="0,0,0,20" MaxWidth="900" HorizontalAlignment="Left">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                            <materialDesign:Card Padding="30" Margin="0,0,0,20" HorizontalAlignment="Stretch">
                                 <StackPanel>
                                     <TextBlock Text="{DynamicResource AddForm_Title}" FontSize="18" FontWeight="Bold" Margin="0,0,0,25"/>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="220"/>
+                                            <ColumnDefinition Width="260"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Top">
-                                            <Border Width="200" Height="200" Background="{DynamicResource MaterialDesignDivider}" CornerRadius="4">
+                                            <Border Width="220" Height="220" Background="{DynamicResource MaterialDesignDivider}" CornerRadius="8">
                                                 <Grid>
-                                                    <materialDesign:PackIcon Kind="Image" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.2"/>
-                                                    <Image x:Name="PreviewImage" Stretch="UniformToFill" Margin="2"/>
+                                                    <materialDesign:PackIcon Kind="Image" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.2"/>
+                                                    <Image x:Name="PreviewImage" Stretch="UniformToFill" Margin="4"/>
                                                 </Grid>
                                             </Border>
-                                            <Button Style="{DynamicResource MaterialDesignRaisedButton}" Margin="0,15,0,0" Width="200" Click="AutoImageSearch_Click">
+                                            <Button Style="{DynamicResource MaterialDesignRaisedButton}" Margin="0,20,0,0" Width="220" Click="AutoImageSearch_Click">
                                                 <StackPanel Orientation="Horizontal">
                                                     <materialDesign:PackIcon Kind="AutoFix" Margin="0,0,8,0"/>
                                                     <TextBlock Text="{DynamicResource AddForm_FindImage}"/>
                                                 </StackPanel>
                                             </Button>
-                                            <TextBox x:Name="ImageUrlTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_ImageUrl}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,10,0,0" TextChanged="ImageUrlTextBox_TextChanged"/>
+                                            <TextBox x:Name="ImageUrlTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_ImageUrl}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,15,0,0" TextChanged="ImageUrlTextBox_TextChanged"/>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="1" Margin="30,0,0,0">
-                                            <ComboBox x:Name="TypeComboBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Category}" Style="{DynamicResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,20" SelectionChanged="TypeComboBox_SelectionChanged">
-                                                <ComboBoxItem Content="AO (All-In-One PC)"/>
-                                                <ComboBoxItem Content="PC (Masaüstü Bilgisayar)"/>
-                                                <ComboBoxItem Content="LP (Laptop)"/>
-                                                <ComboBoxItem Content="ET (Akıllı Tahta)"/>
-                                                <ComboBoxItem Content="GC (Oyun Konsolu)"/>
-                                                <ComboBoxItem Content="MN (Monitör)"/>
-                                                <ComboBoxItem Content="PH (Telefon)"/>
-                                                <ComboBoxItem Content="TB (Tablet)"/>
-                                                <ComboBoxItem Content="PR (Yazıcı)"/>
-                                                <ComboBoxItem Content="RT (Router)"/>
-                                                <ComboBoxItem Content="PJ (Projeksiyon)"/>
-                                            </ComboBox>
-                                            <TextBox x:Name="BrandTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Brand}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
-                                            <TextBox x:Name="ModelTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Model}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
-                                            <TextBox x:Name="SerialNumberTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Serial}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
-                                            <TextBox x:Name="DeviceNameTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_DeviceName}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
-                                            <ComboBox x:Name="OwnerComboBox" IsEditable="True" IsTextSearchEnabled="False"
-                                                      materialDesign:HintAssist.Hint="{DynamicResource AddForm_Owner}"
-                                                      Style="{DynamicResource MaterialDesignFloatingHintComboBox}"
-                                                      Margin="0,0,0,20"
-                                                      KeyUp="OwnerComboBox_TextChanged" />
-                                            <TextBox x:Name="OwnerEmailTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_OwnerEmail}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
-                                            <TextBox x:Name="OwnerPhoneTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_OwnerPhone}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
-                                        </StackPanel>
+                                        <Grid Grid.Column="1" Margin="30,0,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="15"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <ComboBox x:Name="TypeComboBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Category}" Style="{DynamicResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,20" SelectionChanged="TypeComboBox_SelectionChanged">
+                                                    <ComboBoxItem Content="AO (All-In-One PC)"/>
+                                                    <ComboBoxItem Content="PC (Masaüstü Bilgisayar)"/>
+                                                    <ComboBoxItem Content="LP (Laptop)"/>
+                                                    <ComboBoxItem Content="ET (Akıllı Tahta)"/>
+                                                    <ComboBoxItem Content="GC (Oyun Konsolu)"/>
+                                                    <ComboBoxItem Content="MN (Monitör)"/>
+                                                    <ComboBoxItem Content="PH (Telefon)"/>
+                                                    <ComboBoxItem Content="TB (Tablet)"/>
+                                                    <ComboBoxItem Content="PR (Yazıcı)"/>
+                                                    <ComboBoxItem Content="RT (Router)"/>
+                                                    <ComboBoxItem Content="PJ (Projeksiyon)"/>
+                                                </ComboBox>
+                                                <TextBox x:Name="BrandTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Brand}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                                                <TextBox x:Name="ModelTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Model}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                                                <TextBox x:Name="SerialNumberTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Serial}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+</StackPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <TextBox x:Name="DeviceNameTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_DeviceName}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                                                <ComboBox x:Name="OwnerComboBox" IsEditable="True" IsTextSearchEnabled="False"
+                                                          materialDesign:HintAssist.Hint="{DynamicResource AddForm_Owner}"
+                                                          Style="{DynamicResource MaterialDesignFloatingHintComboBox}"
+                                                          Margin="0,0,0,20"
+                                                          KeyUp="OwnerComboBox_TextChanged" />
+                                                <TextBox x:Name="OwnerEmailTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_OwnerEmail}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                                                <TextBox x:Name="OwnerPhoneTextBox" materialDesign:HintAssist.Hint="{DynamicResource AddForm_OwnerPhone}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                                            </StackPanel>
+                                        </Grid>
                                     </Grid>
                                     
                                     <Expander Header="{DynamicResource AddForm_TechDetails}" Margin="0,20,0,0">
@@ -413,6 +422,7 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
@@ -423,9 +433,11 @@
                                                 <ComboBoxItem Content="{DynamicResource Status_Inactive}" Tag="Pasif"/>
                                                 <ComboBoxItem Content="{DynamicResource Status_Faulty}" Tag="Arızalı"/>
                                             </ComboBox>
-                                            <DatePicker x:Name="PurchaseDatePicker" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource AddForm_PurchaseDate}" Style="{DynamicResource MaterialDesignFloatingHintDatePicker}" Margin="0,0,0,20"/>
+                                            <DatePicker x:Name="ManufactureDatePicker" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource AddForm_ManufactureDate}" Style="{DynamicResource MaterialDesignFloatingHintDatePicker}" Margin="0,0,10,20"/>
+                                            <DatePicker x:Name="PurchaseDatePicker" Grid.Column="2" materialDesign:HintAssist.Hint="{DynamicResource AddForm_PurchaseDate}" Style="{DynamicResource MaterialDesignFloatingHintDatePicker}" Margin="0,0,0,20"/>
                                             <TextBox x:Name="CostTextBox" Grid.Row="1" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Cost}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,10,0"/>
-                                            <TextBox x:Name="PeriodTextBox" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Period}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+                                            <TextBox x:Name="PeriodTextBox" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource AddForm_Period}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,10,0" PreviewTextInput="NumberValidationTextBox"/>
+                                            <TextBox x:Name="WarrantyPeriodTextBox" Grid.Row="1" Grid.Column="2" Text="24" materialDesign:HintAssist.Hint="{DynamicResource AddForm_WarrantyPeriod}" Style="{DynamicResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,0" PreviewTextInput="NumberValidationTextBox"/>
                                             <DatePicker x:Name="LastMaintenanceDatePicker" Visibility="Collapsed"/>
                                         </Grid>
                                     </Expander>

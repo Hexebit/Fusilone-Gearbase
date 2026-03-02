@@ -108,6 +108,8 @@ public partial class MainWindow : Window
             _dbHelper.InitializeDatabase();
             LoadDeviceList(); 
             PurchaseDatePicker.SelectedDate = DateTime.Now; // Set Default
+            ManufactureDatePicker.SelectedDate = DateTime.Now;
+            WarrantyPeriodTextBox.Text = "24";
             
             // Sync ToggleButton with current theme
             var paletteHelper = new PaletteHelper();
@@ -844,6 +846,10 @@ public partial class MainWindow : Window
                 ?? (StatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()
                 ?? "Aktif";
         DateTime purchaseDate = PurchaseDatePicker.SelectedDate ?? DateTime.Now;
+        DateTime manufactureDate = ManufactureDatePicker.SelectedDate ?? DateTime.Now;
+        DateTime createdDate = DateTime.Now; // Sisteme eklenme tarihi
+        if (!int.TryParse(WarrantyPeriodTextBox.Text, out int warrantyPeriodMonths) || warrantyPeriodMonths <= 0)
+            warrantyPeriodMonths = 24;
 
         var techSpecs = new Dictionary<string, string>();
         
@@ -893,6 +899,9 @@ public partial class MainWindow : Window
             Cost = cost,
             Status = status,
             PurchaseDate = purchaseDate,
+            ManufactureDate = manufactureDate,
+            CreatedDate = createdDate,
+            WarrantyPeriodMonths = warrantyPeriodMonths,
             ImageUrl = ImageUrlTextBox.Text,
             DeviceName = DeviceNameTextBox.Text,
             OwnerName = ownerName,
@@ -994,6 +1003,10 @@ public partial class MainWindow : Window
             DynamicFieldsPanel.Children.Clear();
             AdvancedFieldsPanel.Children.Clear();
             CostTextBox.Text = "0";
+            PeriodTextBox.Text = "6";
+            WarrantyPeriodTextBox.Text = "24";
+            PurchaseDatePicker.SelectedDate = DateTime.Now;
+            ManufactureDatePicker.SelectedDate = DateTime.Now;
             ImageUrlTextBox.Clear();
             DeviceNameTextBox.Clear();
             if (OwnerComboBox != null) OwnerComboBox.Text = "";
