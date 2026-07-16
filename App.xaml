@@ -11,28 +11,31 @@
                 <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <!-- Theme-aware brushes and application-specific color keys -->
-            <SolidColorBrush x:Key="SuccessColor" Color="#FF28A745"/>
-            <SolidColorBrush x:Key="ErrorColor" Color="#FFFF6B6B"/>
-            <SolidColorBrush x:Key="AccentColor" Color="#FFFFC107"/>
 
-            <!-- Device type colors for charts and kanban -->
-            <SolidColorBrush x:Key="TypeColor_PC" Color="#FF4EAEF0"/>
-            <SolidColorBrush x:Key="TypeColor_LP" Color="#FFFFA726"/>
-            <SolidColorBrush x:Key="TypeColor_AO" Color="#FF9C27B0"/>
-            <SolidColorBrush x:Key="TypeColor_PH" Color="#FF03A9F4"/>
-            <SolidColorBrush x:Key="TypeColor_ET" Color="#FFF44336"/>
-            <SolidColorBrush x:Key="TypeColor_MN" Color="#FF8BC34A"/>
+            <!-- Dark Mode Color Overrides for Better Contrast -->
+            <SolidColorBrush x:Key="MaterialDesignPaper" Color="#121212"/>
+            <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="#1E1E1E"/>
+            <SolidColorBrush x:Key="MaterialDesignBody" Color="#E0E0E0"/>
+            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#CE93D8"/>
+            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#E1BEE7"/>
+            <SolidColorBrush x:Key="SecondaryHueMidBrush" Color="#CDDC39"/>
+            <SolidColorBrush x:Key="MaterialDesignDivider" Color="#404040"/>
 
-            <!-- Kanban/status colors -->
-            <SolidColorBrush x:Key="StatusColor_Pending" Color="#FF2196F3"/>
-            <SolidColorBrush x:Key="StatusColor_InProgress" Color="#FFFF9800"/>
-            <SolidColorBrush x:Key="StatusColor_Ready" Color="#FF4CAF50"/>
-
-            <!-- Overlay and item backgrounds to improve separation in light theme -->
-            <SolidColorBrush x:Key="OverlayBrush" Color="#33111111"/>
-            <SolidColorBrush x:Key="ItemBackgroundBrush" Color="#22000000"/>
-            <!-- Ensure text uses MaterialDesign body brush so Light/Dark themes flip text color appropriately -->
+            <!-- Status and Type Colors -->
+            <SolidColorBrush x:Key="SuccessColor" Color="#81C784"/>
+            <SolidColorBrush x:Key="ErrorColor" Color="#EF5350"/>
+            <SolidColorBrush x:Key="AccentColor" Color="#FFD54F"/>
+            <SolidColorBrush x:Key="TypeColor_PC" Color="#64B5F6"/>
+            <SolidColorBrush x:Key="TypeColor_LP" Color="#FFB74D"/>
+            <SolidColorBrush x:Key="TypeColor_AO" Color="#BA68C8"/>
+            <SolidColorBrush x:Key="TypeColor_PH" Color="#29B6F6"/>
+            <SolidColorBrush x:Key="TypeColor_ET" Color="#EF5350"/>
+            <SolidColorBrush x:Key="TypeColor_MN" Color="#9CCC65"/>
+            <SolidColorBrush x:Key="StatusColor_Pending" Color="#42A5F5"/>
+            <SolidColorBrush x:Key="StatusColor_InProgress" Color="#FFA726"/>
+            <SolidColorBrush x:Key="StatusColor_Ready" Color="#66BB6A"/>
+            <SolidColorBrush x:Key="OverlayBrush" Color="#33222222"/>
+            <SolidColorBrush x:Key="ItemBackgroundBrush" Color="#2A2A2A"/>
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
             </Style>
