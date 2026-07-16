@@ -1,8 +1,11 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
+using Serilog;
+using Fusilone.Helpers;
 
 namespace Fusilone;
 
@@ -14,6 +17,9 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        InitializeLogging();
+        Log.Information("=== Fusilone App Başlatılıyor ===");
 
         LoadLanguageResources();
         
@@ -47,5 +53,18 @@ public partial class App : Application
 
         Resources.MergedDictionaries.Add(dict);
     }
-}
 
+    private void InitializeLogging()
+    {
+        string appDataPath = Helpers.PathHelper.GetAppDataPath();
+        string logsPath = Path.Combine(appDataPath, "Logs");
+        if (!Directory.Exists(logsPath))
+            Directory.CreateDirectory(logsPath);
+
+        string logPath = Path.Combine(logsPath, "fusilone-.txt");
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30)
+            .CreateLogger();
+    }
+}
