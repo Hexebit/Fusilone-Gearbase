@@ -454,18 +454,19 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
         try
         {
             _dbHelper.AddMaintenanceRecord(record);
-            
+
             // Sync Device object and Database
             _device.LastMaintenanceDate = record.Date;
+            _device.NextMaintenanceDate = record.Date.AddMonths(_device.MaintenancePeriodMonths);
             _dbHelper.UpdateDevice(_device);
-            
+
             // Refresh UI
             LastMaintText.Text = record.Date.ToString("dd.MM.yyyy");
-            
+
             NewRecordDescription.Clear();
             NewRecordCost.Text = "0";
-            LoadMaintenanceHistory(); 
-            MessageBox.Show("Bakım kaydı eklendi ve cihazın son bakım tarihi güncellendi.");
+            LoadMaintenanceHistory();
+            MessageBox.Show("Bakım kaydı eklendi ve sonraki bakım tarihi güncellendi.");
         }
         catch (Exception ex)
         {
