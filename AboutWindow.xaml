@@ -5,13 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Fusilone"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="Hakkında" Height="550" Width="450"
+        Title="Hakkında" Height="560" Width="450"
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        WindowStyle="SingleBorderWindow"
+        Background="{DynamicResource FslBgBase}"
+        TextElement.Foreground="{DynamicResource FslTextPrimary}"
         Icon="pack://application:,,,/assets/logo.png">
-    <Grid Margin="10">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="36" ResizeBorderThickness="0" GlassFrameThickness="1" UseAeroCaptionButtons="False" CornerRadius="0"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom Title Bar -->
+        <Grid Grid.Row="0" Background="{DynamicResource FslBgBase}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                <Control Style="{StaticResource FslLogoMark}" Width="16" Height="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource Menu_About}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource FslTextPrimary}" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button Click="Close_Click" HorizontalAlignment="Right" Width="36" Height="36" Padding="0"
+                    Style="{StaticResource MaterialDesignFlatButton}" shell:WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Close">
+                <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="{DynamicResource FslDanger}"/>
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="10,10,10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -22,25 +48,33 @@
             <TabItem Header="{DynamicResource About_Tab_About}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
                     <StackPanel HorizontalAlignment="Center">
-                        <Image Source="pack://application:,,,/assets/logo.png" Width="100" Height="100" Margin="0,0,0,15"/>
+                        <Control Style="{StaticResource FslLogoMark}" Width="96" Height="96" Margin="0,0,0,15"/>
                         
-                        <TextBlock Text="{DynamicResource About_Title}" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                        <TextBlock Text="{DynamicResource About_Title}" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource FslAccent}"/>
                         <TextBlock Text="{DynamicResource About_Subtitle}" FontSize="14" HorizontalAlignment="Center" Opacity="0.7"/>
                         <TextBlock Text="{DynamicResource About_Version}" FontSize="12" HorizontalAlignment="Center" Margin="0,5,0,25" Opacity="0.5"/>
                         
-                        <materialDesign:Card Padding="15" UniformCornerRadius="10" Margin="0,0,0,15" Width="300">
+                        <materialDesign:Card Padding="15" UniformCornerRadius="8" Margin="0,0,0,15" Width="300">
                             <StackPanel>
                                 <TextBlock Text="{DynamicResource About_Developer}" FontSize="10" FontWeight="Bold" Opacity="0.5" HorizontalAlignment="Center"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
                                     <TextBlock Text="Hexebit - M. Asaf" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                    <Button Style="{StaticResource MaterialDesignIconButton}" 
-                                            Width="28" Height="28" 
+                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="28" Height="28"
                                             Padding="0" Margin="8,0,0,0"
                                             ToolTip="GitHub Profile"
                                             Click="OpenGitHub_Click">
                                         <materialDesign:PackIcon Kind="Github" Width="20" Height="20"/>
                                     </Button>
                                 </StackPanel>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" Click="OpenWebsite_Click"
+                                        HorizontalAlignment="Center" Height="24" Padding="6,0"
+                                        Foreground="{DynamicResource FslAccent}" ToolTip="www.fusilone.com">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Web" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                        <TextBlock Text="www.fusilone.com" FontSize="12" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
                             </StackPanel>
                         </materialDesign:Card>
 
@@ -65,7 +99,7 @@
                     <StackPanel>
                         <TextBlock Text="{DynamicResource About_ReleaseTitle}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,10"/>
                         
-                        <materialDesign:Card Padding="15" Background="{DynamicResource MaterialDesignCardBackground}" Margin="0,0,0,15">
+                        <materialDesign:Card Padding="15" Background="{DynamicResource FslSurface}" Margin="0,0,0,15">
                             <StackPanel>
                                 <TextBlock Text="{DynamicResource About_ReleaseNote1}" TextWrapping="Wrap" Margin="0,0,0,10"/>
                                 <TextBlock Text="{DynamicResource About_ReleaseNote2}" TextWrapping="Wrap" Margin="0,0,0,10"/>
@@ -74,12 +108,15 @@
                         </materialDesign:Card>
                         
                         <TextBlock Text="{DynamicResource About_ReleasePrev}" Opacity="0.55" Margin="0,10,0,5" FontSize="12"/>
-                        <materialDesign:Card Padding="15" Background="{DynamicResource MaterialDesignCardBackground}" Opacity="0.55" Margin="0,0,0,10">
+                        <materialDesign:Card Padding="15" Background="{DynamicResource FslSurface}" Opacity="0.55" Margin="0,0,0,10">
                             <TextBlock Text="{DynamicResource About_ReleasePrevDesc}" TextWrapping="Wrap" FontSize="11"/>
                         </materialDesign:Card>
                         
                         <TextBlock Text="{DynamicResource About_ReleasePrev2}" Opacity="0.5" Margin="0,5,0,5" FontSize="12"/>
                         <TextBlock Text="{DynamicResource About_ReleasePrev2Desc}" Opacity="0.5" TextWrapping="Wrap" FontSize="11"/>
+
+                        <TextBlock Text="{DynamicResource About_ReleasePrev3}" Opacity="0.5" Margin="0,10,0,5" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource About_ReleasePrev3Desc}" Opacity="0.5" TextWrapping="Wrap" FontSize="11" Margin="0,0,0,10"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -87,7 +124,8 @@
 
         <StackPanel Grid.Row="1" Margin="0,15,0,0">
             <TextBlock Text="{DynamicResource About_Copyright}" FontSize="10" HorizontalAlignment="Center" Margin="0,0,0,10" Opacity="0.4"/>
-            <Button Style="{StaticResource MaterialDesignRaisedButton}" Content="{DynamicResource About_Close}" Width="120" Click="Close_Click" HorizontalAlignment="Center"/>
+            <Button Style="{StaticResource FslPrimaryButton}" Content="{DynamicResource About_Close}" Width="120" Click="Close_Click" HorizontalAlignment="Center"/>
         </StackPanel>
+        </Grid>
     </Grid>
 </Window>

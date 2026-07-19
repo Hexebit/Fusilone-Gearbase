@@ -5,7 +5,7 @@ namespace Fusilone.Data;
 
 public class DatabaseHelper
 {
-    private string _connectionString;
+    private readonly string _connectionString;
 
     public DatabaseHelper()
     {
@@ -15,6 +15,61 @@ public class DatabaseHelper
     public SqliteConnection GetConnection()
     {
         return new SqliteConnection(_connectionString);
+    }
+
+    // Kolon zaten varsa SQLite hata verir; göç sırasında bu beklenen durumdur ve yutulur.
+    private static void AddColumnIfMissing(SqliteConnection connection, string table, string columnDefinition)
+    {
+        try
+        {
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = $"ALTER TABLE {table} ADD COLUMN {columnDefinition}";
+            cmd.ExecuteNonQuery();
+        }
+        catch { /* Kolon zaten mevcut */ }
+    }
+
+    // --- Reader → Model eşleyicileri (tekrarı önlemek için tek noktada) ---
+
+    // "SELECT * FROM Devices" kolon sırasına göre bir Device okur.
+    private static Models.Device MapDevice(SqliteDataReader reader)
+    {
+        return new Models.Device
+        {
+            Id = reader.GetString(0),
+            Type = reader.GetString(1),
+            Brand = reader.GetString(2),
+            Model = reader.GetString(3),
+            SerialNumber = reader.GetString(4),
+            TechSpecs = reader.GetString(5),
+            LastMaintenanceDate = DateTime.Parse(reader.GetString(6)),
+            MaintenancePeriodMonths = reader.GetInt32(7),
+            NextMaintenanceDate = DateTime.Parse(reader.GetString(8)),
+            Cost = (decimal)reader.GetDouble(9),
+            Status = reader.IsDBNull(10) ? "Aktif" : reader.GetString(10),
+            PurchaseDate = reader.FieldCount > 11 && !reader.IsDBNull(11) ? DateTime.Parse(reader.GetString(11)) : DateTime.MinValue,
+            ImageUrl = reader.FieldCount > 12 && !reader.IsDBNull(12) ? reader.GetString(12) : "",
+            DeviceName = reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetString(13) : "",
+            OwnerName = reader.FieldCount > 14 && !reader.IsDBNull(14) ? reader.GetString(14) : "",
+            OwnerCustomerId = reader.FieldCount > 15 && !reader.IsDBNull(15) ? reader.GetInt32(15) : null,
+            Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : "",
+            ManufactureDate = reader.FieldCount > 17 && !reader.IsDBNull(17) ? DateTime.Parse(reader.GetString(17)) : DateTime.MinValue,
+            CreatedDate = reader.FieldCount > 18 && !reader.IsDBNull(18) ? DateTime.Parse(reader.GetString(18)) : DateTime.MinValue,
+            WarrantyPeriodMonths = reader.FieldCount > 19 && !reader.IsDBNull(19) ? reader.GetInt32(19) : 24
+        };
+    }
+
+    // "SELECT Id, Name, Email, Phone, CreatedAt FROM Customers" kolon sırasına göre bir Customer okur.
+    private static Models.Customer MapCustomer(SqliteDataReader reader)
+    {
+        return new Models.Customer
+        {
+            Id = reader.GetInt32(0),
+            Name = reader.GetString(1),
+            Email = reader.IsDBNull(2) ? "" : reader.GetString(2),
+            Phone = reader.IsDBNull(3) ? "" : reader.GetString(3),
+            CreatedAt = reader.IsDBNull(4) ? DateTime.Now : DateTime.Parse(reader.GetString(4))
+        };
     }
 
     public void InitializeDatabase()
@@ -36,90 +91,29 @@ public class DatabaseHelper
         ";
         command.ExecuteNonQuery();
 
-        // Schema Migration (Add columns if they don't exist)
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN LastMaintenanceDate TEXT DEFAULT '0001-01-01T00:00:00'"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
+        // Şema göçü: eksik kolonları ekle (var olanlar sessizce atlanır)
+        string[] columnMigrations =
+        {
+            "LastMaintenanceDate TEXT DEFAULT '0001-01-01T00:00:00'",
+            "MaintenancePeriodMonths INTEGER DEFAULT 6",
+            "NextMaintenanceDate TEXT DEFAULT '0001-01-01T00:00:00'",
+            "Cost REAL DEFAULT 0",
+            "Status TEXT DEFAULT 'Aktif'",
+            "PurchaseDate TEXT DEFAULT '0001-01-01T00:00:00'",
+            "ImageUrl TEXT DEFAULT ''",
+            "DeviceName TEXT DEFAULT ''",
+            "OwnerName TEXT DEFAULT ''",
+            "OwnerCustomerId INTEGER",
+            "Notes TEXT DEFAULT ''",
+            "ManufactureDate TEXT DEFAULT '0001-01-01T00:00:00'",
+            "CreatedDate TEXT DEFAULT '0001-01-01T00:00:00'",
+            "WarrantyPeriodMonths INTEGER DEFAULT 24"
+        };
 
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN MaintenancePeriodMonths INTEGER DEFAULT 6"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN NextMaintenanceDate TEXT DEFAULT '0001-01-01T00:00:00'"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN Cost REAL DEFAULT 0"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN Status TEXT DEFAULT 'Aktif'"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN PurchaseDate TEXT DEFAULT '0001-01-01T00:00:00'"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN ImageUrl TEXT DEFAULT ''"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN DeviceName TEXT DEFAULT ''"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try { 
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN OwnerName TEXT DEFAULT ''"; 
-            alterCmd.ExecuteNonQuery(); 
-        } catch { /* Ignore if exists */ }
-
-        try {
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN OwnerCustomerId INTEGER";
-            alterCmd.ExecuteNonQuery();
-        } catch { /* Ignore if exists */ }
-
-        try {
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN Notes TEXT DEFAULT ''";
-            alterCmd.ExecuteNonQuery();
-        } catch { /* Ignore if exists */ }
-
-        try {
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN ManufactureDate TEXT DEFAULT '0001-01-01T00:00:00'";
-            alterCmd.ExecuteNonQuery();
-        } catch { /* Ignore if exists */ }
-
-        try {
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN CreatedDate TEXT DEFAULT '0001-01-01T00:00:00'";
-            alterCmd.ExecuteNonQuery();
-        } catch { /* Ignore if exists */ }
-
-        try {
-            var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE Devices ADD COLUMN WarrantyPeriodMonths INTEGER DEFAULT 24";
-            alterCmd.ExecuteNonQuery();
-        } catch { /* Ignore if exists */ }
+        foreach (var columnDef in columnMigrations)
+        {
+            AddColumnIfMissing(connection, "Devices", columnDef);
+        }
 
         // Create Customers table
         var customerTableCmd = connection.CreateCommand();
@@ -424,29 +418,7 @@ public class DatabaseHelper
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            devices.Add(new Models.Device
-            {
-                Id = reader.GetString(0),
-                Type = reader.GetString(1),
-                Brand = reader.GetString(2),
-                Model = reader.GetString(3),
-                SerialNumber = reader.GetString(4),
-                TechSpecs = reader.GetString(5),
-                LastMaintenanceDate = DateTime.Parse(reader.GetString(6)),
-                MaintenancePeriodMonths = reader.GetInt32(7),
-                NextMaintenanceDate = DateTime.Parse(reader.GetString(8)),
-                Cost = (decimal)reader.GetDouble(9),
-                Status = reader.IsDBNull(10) ? "Aktif" : reader.GetString(10),
-                PurchaseDate = reader.FieldCount > 11 && !reader.IsDBNull(11) ? DateTime.Parse(reader.GetString(11)) : DateTime.MinValue,
-                ImageUrl = reader.FieldCount > 12 && !reader.IsDBNull(12) ? reader.GetString(12) : "",
-                DeviceName = reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetString(13) : "",
-                OwnerName = reader.FieldCount > 14 && !reader.IsDBNull(14) ? reader.GetString(14) : "",
-                OwnerCustomerId = reader.FieldCount > 15 && !reader.IsDBNull(15) ? reader.GetInt32(15) : null,
-                Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : "",
-                ManufactureDate = reader.FieldCount > 17 && !reader.IsDBNull(17) ? DateTime.Parse(reader.GetString(17)) : DateTime.MinValue,
-                CreatedDate = reader.FieldCount > 18 && !reader.IsDBNull(18) ? DateTime.Parse(reader.GetString(18)) : DateTime.MinValue,
-                WarrantyPeriodMonths = reader.FieldCount > 19 && !reader.IsDBNull(19) ? reader.GetInt32(19) : 24
-            });
+            devices.Add(MapDevice(reader));
         }
 
         return devices;
@@ -464,14 +436,7 @@ public class DatabaseHelper
         using var reader = command.ExecuteReader();
         if (reader.Read())
         {
-            return new Models.Customer
-            {
-                Id = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Email = reader.IsDBNull(2) ? "" : reader.GetString(2),
-                Phone = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                CreatedAt = reader.IsDBNull(4) ? DateTime.Now : DateTime.Parse(reader.GetString(4))
-            };
+            return MapCustomer(reader);
         }
 
         return null;
@@ -489,14 +454,7 @@ public class DatabaseHelper
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            list.Add(new Models.Customer
-            {
-                Id = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Email = reader.IsDBNull(2) ? "" : reader.GetString(2),
-                Phone = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                CreatedAt = reader.IsDBNull(4) ? DateTime.Now : DateTime.Parse(reader.GetString(4))
-            });
+            list.Add(MapCustomer(reader));
         }
 
         return list;
@@ -515,14 +473,7 @@ public class DatabaseHelper
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            list.Add(new Models.Customer
-            {
-                Id = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Email = reader.IsDBNull(2) ? "" : reader.GetString(2),
-                Phone = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                CreatedAt = reader.IsDBNull(4) ? DateTime.Now : DateTime.Parse(reader.GetString(4))
-            });
+            list.Add(MapCustomer(reader));
         }
 
         return list;
@@ -592,29 +543,7 @@ public class DatabaseHelper
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            devices.Add(new Models.Device
-            {
-                Id = reader.GetString(0),
-                Type = reader.GetString(1),
-                Brand = reader.GetString(2),
-                Model = reader.GetString(3),
-                SerialNumber = reader.GetString(4),
-                TechSpecs = reader.GetString(5),
-                LastMaintenanceDate = DateTime.Parse(reader.GetString(6)),
-                MaintenancePeriodMonths = reader.GetInt32(7),
-                NextMaintenanceDate = DateTime.Parse(reader.GetString(8)),
-                Cost = (decimal)reader.GetDouble(9),
-                Status = reader.IsDBNull(10) ? "Aktif" : reader.GetString(10),
-                PurchaseDate = reader.FieldCount > 11 && !reader.IsDBNull(11) ? DateTime.Parse(reader.GetString(11)) : DateTime.MinValue,
-                ImageUrl = reader.FieldCount > 12 && !reader.IsDBNull(12) ? reader.GetString(12) : "",
-                DeviceName = reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetString(13) : "",
-                OwnerName = reader.FieldCount > 14 && !reader.IsDBNull(14) ? reader.GetString(14) : "",
-                OwnerCustomerId = reader.FieldCount > 15 && !reader.IsDBNull(15) ? reader.GetInt32(15) : null,
-                Notes = reader.FieldCount > 16 && !reader.IsDBNull(16) ? reader.GetString(16) : "",
-                ManufactureDate = reader.FieldCount > 17 && !reader.IsDBNull(17) ? DateTime.Parse(reader.GetString(17)) : DateTime.MinValue,
-                CreatedDate = reader.FieldCount > 18 && !reader.IsDBNull(18) ? DateTime.Parse(reader.GetString(18)) : DateTime.MinValue,
-                WarrantyPeriodMonths = reader.FieldCount > 19 && !reader.IsDBNull(19) ? reader.GetInt32(19) : 24
-            });
+            devices.Add(MapDevice(reader));
         }
 
         return devices;
@@ -803,6 +732,16 @@ public class DatabaseHelper
             delPhotos.CommandText = "DELETE FROM DevicePhotos WHERE DeviceId = $id;";
             delPhotos.Parameters.AddWithValue("$id", deviceId);
             delPhotos.ExecuteNonQuery();
+
+            using var delParts = connection.CreateCommand();
+            delParts.CommandText = "DELETE FROM DeviceParts WHERE DeviceId = $id;";
+            delParts.Parameters.AddWithValue("$id", deviceId);
+            delParts.ExecuteNonQuery();
+
+            using var delMovements = connection.CreateCommand();
+            delMovements.CommandText = "DELETE FROM PartMovements WHERE DeviceId = $id;";
+            delMovements.Parameters.AddWithValue("$id", deviceId);
+            delMovements.ExecuteNonQuery();
 
             using var delDevice = connection.CreateCommand();
             delDevice.CommandText = "DELETE FROM Devices WHERE Id = $id;";

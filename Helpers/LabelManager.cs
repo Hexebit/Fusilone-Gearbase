@@ -19,636 +19,207 @@ public class LabelManager
     private const int Width = (int)(BaseWidth * ScaleFactor);   // 1050
     private const int Height = (int)(BaseHeight * ScaleFactor); // 600
 
-            public static string GenerateLabel(Device device, string maintenanceNote = "")
+    public static string GenerateLabel(Device device, string maintenanceNote = "")
+    {
+        string fileName = $"Etiket_{device.Id}.png";
+        string outputFolder = PathHelper.GetLabelsPath();
+        string assetsFolder = PathHelper.GetAssetsPath();
+        string logoPath = Path.Combine(assetsFolder, "logo.png");
 
+        if (!Directory.Exists(outputFolder))
+        {
+            Directory.CreateDirectory(outputFolder);
+        }
+        
+        string fullPath = Path.Combine(outputFolder, fileName);
+
+        // --- 1. PREPARE RESOURCES & MEASURE TEXT ---
+        
+        double padding = 15;
+        double gap = 20;
+        double qrSize = 140 * ScaleFactor;
+
+        // Fonts
+        Typeface fontFaceBold = new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
+        Typeface fontFaceRegular = new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
+        // Scaled Font Sizes
+        double fontSizeTitle = 12 * ScaleFactor;
+        double fontSizeID = 14 * ScaleFactor;
+        double fontSizeName = 11 * ScaleFactor;
+        double fontSizeDetail = 9 * ScaleFactor;
+        double fontSizeSmall = 7 * ScaleFactor;
+
+        // Helper to create FormattedText
+        FormattedText CreateText(string text, Typeface typeface, double size, Brush brush)
+        {
+            return new FormattedText(
+                text ?? "",
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                typeface,
+                size,
+                brush,
+                VisualTreeHelper.GetDpi(new ContainerVisual()).PixelsPerDip);
+        }
+
+        var textTitle = CreateText("FUSILONE GEARBASE", fontFaceBold, fontSizeTitle, Brushes.Black);
+        var textId = CreateText(device.Id, fontFaceBold, fontSizeID, Brushes.Black);
+        
+        var textName = string.IsNullOrEmpty(device.DeviceName) ? null : 
+                       CreateText(device.DeviceName, fontFaceBold, fontSizeName, Brushes.Black);
+
+        string brandModelStr = $"{device.Brand} {device.Model}".Trim();
+        var textBrandModel = CreateText(brandModelStr, fontFaceRegular, fontSizeDetail, Brushes.Black);
+
+        double maxTextWidth = Width - (padding * 2) - gap - qrSize;
+
+        string summaryStr = GetTechSummary(device);
+        var textSummary = CreateText(summaryStr, fontFaceRegular, fontSizeSmall, Brushes.DarkGray);
+        textSummary.MaxTextWidth = maxTextWidth;
+        textSummary.MaxTextHeight = fontSizeSmall * 3.5;
+        textSummary.Trimming = TextTrimming.CharacterEllipsis;
+
+        string lastMaint = device.LastMaintenanceDate.ToString("dd.MM.yyyy");
+        string nextMaint = device.NextMaintenanceDate.ToString("dd.MM.yyyy");
+        var textDates1 = CreateText($"Son Bakım: {lastMaint}", fontFaceRegular, fontSizeSmall, Brushes.Black);
+        var textDates2 = CreateText($"Sıradaki: {nextMaint}", fontFaceBold, fontSizeSmall, Brushes.Black);
+        
+        var textOwner = string.IsNullOrEmpty(device.OwnerName) ? null :
+                        CreateText($"Sahibi: {device.OwnerName}", fontFaceBold, fontSizeSmall, Brushes.DarkBlue);
+
+        string noteDisplay = maintenanceNote ?? string.Empty;
+        var textNote = string.IsNullOrWhiteSpace(noteDisplay) ? null :
+                       CreateText($"Not: {noteDisplay}", fontFaceRegular, fontSizeSmall, Brushes.DimGray);
+        if (textNote != null)
+        {
+            textNote.MaxTextWidth = maxTextWidth;
+            textNote.MaxTextHeight = fontSizeSmall * 5.0;
+            textNote.Trimming = TextTrimming.WordEllipsis;
+        }
+
+        // --- 2. CALCULATE DIMENSIONS ---
+        double currentTextH = 0;
+        double maxTextW = 0;
+        double logoH = 0;
+
+        if (File.Exists(logoPath))
+        {
+            logoH = 30 * ScaleFactor;
+            currentTextH += logoH + (10 * ScaleFactor);
+            maxTextW = 30 * ScaleFactor;
+        }
+
+        void Measure(FormattedText? ft, double marginBottom = 0)
+        {
+            if (ft == null) return;
+            maxTextW = Math.Max(maxTextW, ft.Width);
+            currentTextH += ft.Height + marginBottom;
+        }
+
+        double lineGap = 5 * ScaleFactor;
+
+        Measure(textTitle, lineGap);
+        Measure(textId, lineGap);
+        Measure(textName, lineGap);
+        Measure(textBrandModel, lineGap * 2);
+        Measure(textSummary, lineGap * 2);
+        Measure(textDates1, 2);
+        Measure(textDates2, lineGap);
+        Measure(textOwner, lineGap);
+        Measure(textNote, 0);
+
+        double contentHeight = Math.Max(currentTextH, qrSize);
+        double finalHeight = contentHeight + (padding * 2);
+        double finalWidth = padding + maxTextW + gap + qrSize + padding;
+
+        int renderWidth = Width;
+        int renderHeight = Height;
+
+        // --- 3. DRAW ---
+        var drawingVisual = new DrawingVisual();
+
+        using (DrawingContext dc = drawingVisual.RenderOpen())
+        {
+            dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, renderWidth, renderHeight));
+            dc.DrawRectangle(null, new Pen(Brushes.LightGray, 1 * ScaleFactor), new Rect(0, 0, renderWidth, renderHeight));
+
+            double qrX = renderWidth - padding - qrSize;
+            double qrY = (renderHeight - qrSize) / 2;
+
+            string qrContent = $"ID: {device.Id}\nAd: {device.DeviceName}\nSahibi: {device.OwnerName}\nMarka: {device.Brand}\nModel: {device.Model}\nNot: {maintenanceNote}";
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrContent, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+
+            using (var qrBitmap = qrCode.GetGraphic(20)) 
             {
-
-                string fileName = $"Etiket_{device.Id}.png";
-
-                string outputFolder = PathHelper.GetLabelsPath();
-
-                string assetsFolder = PathHelper.GetAssetsPath();
-
-                string logoPath = Path.Combine(assetsFolder, "logo.png");
-
-        
-
-                if (!Directory.Exists(outputFolder))
-
-                {
-
-                    Directory.CreateDirectory(outputFolder);
-
-                }
-
-                
-
-                string fullPath = Path.Combine(outputFolder, fileName);
-
-        
-
-                // --- 1. PREPARE RESOURCES & MEASURE TEXT ---
-
-                
-
-                double padding = 15; // 15px padding around
-
-                double gap = 20;     // Gap between text and QR
-
-                double qrSize = 140 * ScaleFactor; // Base QR size (scaled)
-
-        
-
-                // Fonts
-
-                Typeface fontFaceBold = new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
-
-                Typeface fontFaceRegular = new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-
-        
-
-                // Scaled Font Sizes
-
-                double fontSizeTitle = 12 * ScaleFactor;
-
-                double fontSizeID = 14 * ScaleFactor;
-
-                double fontSizeName = 11 * ScaleFactor;
-
-                double fontSizeDetail = 9 * ScaleFactor;
-
-                double fontSizeSmall = 7 * ScaleFactor;
-
-        
-
-                // Helper to create FormattedText
-
-                FormattedText CreateText(string text, Typeface typeface, double size, Brush brush)
-
-                {
-
-                    return new FormattedText(
-
-                        text ?? "",
-
-                        CultureInfo.CurrentCulture,
-
-                        FlowDirection.LeftToRight,
-
-                        typeface,
-
-                        size,
-
-                        brush,
-
-                        VisualTreeHelper.GetDpi(new ContainerVisual()).PixelsPerDip);
-
-                }
-
-        
-                var textTitle = CreateText("FUSILONE", fontFaceBold, fontSizeTitle, Brushes.Black);
-
-                var textId = CreateText(device.Id, fontFaceBold, fontSizeID, Brushes.Black);
-
-                
-
-                var textName = string.IsNullOrEmpty(device.DeviceName) ? null : 
-
-                               CreateText(device.DeviceName, fontFaceBold, fontSizeName, Brushes.Black);
-
-        
-
-                string brandModelStr = $"{device.Brand} {device.Model}".Trim();
-
-                var textBrandModel = CreateText(brandModelStr, fontFaceRegular, fontSizeDetail, Brushes.Black);
-
-        
-
-                // Summary (Tech Specs) - Wrapped
-
-                // Text area width based on fixed label width
-
-                double maxTextWidth = Width - (padding * 2) - gap - qrSize;
-
-        
-
-                string summaryStr = GetTechSummary(device);
-
-                var textSummary = CreateText(summaryStr, fontFaceRegular, fontSizeSmall, Brushes.DarkGray);
-
-                textSummary.MaxTextWidth = maxTextWidth;
-
-                textSummary.MaxTextHeight = fontSizeSmall * 3.5; // Limit lines
-
-                textSummary.Trimming = TextTrimming.CharacterEllipsis;
-
-        
-
-                // Footer Lines
-
-                string lastMaint = device.LastMaintenanceDate.ToString("dd.MM.yyyy");
-
-                string nextMaint = device.NextMaintenanceDate.ToString("dd.MM.yyyy");
-
-                var textDates1 = CreateText($"Son Bakım: {lastMaint}", fontFaceRegular, fontSizeSmall, Brushes.Black);
-
-                var textDates2 = CreateText($"Sıradaki: {nextMaint}", fontFaceBold, fontSizeSmall, Brushes.Black);
-
-                
-
-                var textOwner = string.IsNullOrEmpty(device.OwnerName) ? null :
-
-                                CreateText($"Sahibi: {device.OwnerName}", fontFaceBold, fontSizeSmall, Brushes.DarkBlue);
-
-        
-
-                string noteDisplay = maintenanceNote ?? string.Empty;
-
-                
-
-                var textNote = string.IsNullOrWhiteSpace(noteDisplay) ? null :
-
-                               CreateText($"Not: {noteDisplay}", fontFaceRegular, fontSizeSmall, Brushes.DimGray);
-
-                if (textNote != null)
-
-                {
-
-                    textNote.MaxTextWidth = maxTextWidth;
-
-                    textNote.MaxTextHeight = fontSizeSmall * 5.0;
-
-                    textNote.Trimming = TextTrimming.WordEllipsis;
-
-                }
-
-        
-
-        
-
-                // --- 2. CALCULATE DIMENSIONS ---
-
-                
-
-                        // Calculate total text height
-
-                
-
-                        double currentTextH = 0;
-
-                
-
-                        double maxTextW = 0;
-
-                
-
-                        
-
-                
-
-                        // Logo measurement (if exists)
-
-                
-
-                        double logoH = 0;
-
-                
-
-                        if (File.Exists(logoPath))
-
-                
-
-                        {
-
-                
-
-                            logoH = 30 * ScaleFactor;
-
-                
-
-                            currentTextH += logoH + (10 * ScaleFactor); // Logo + gap
-
-                
-
-                            maxTextW = 30 * ScaleFactor; // Logo width
-
-                
-
-                        }
-
-                
-
-                
-
-                
-
-                        void Measure(FormattedText? ft, double marginBottom = 0)
-
-                
-
-                        {
-
-                
-
-                            if (ft == null) return;
-
-                
-
-                            maxTextW = Math.Max(maxTextW, ft.Width);
-
-                
-
-                            currentTextH += ft.Height + marginBottom;
-
-                
-
-                        }
-
-                
-
-                
-
-                
-
-                        double lineGap = 5 * ScaleFactor; // Gap between lines
-
-                
-
-                
-
-                
-
-                        Measure(textTitle, lineGap);
-
-                        Measure(textId, lineGap);
-
-                
-
-                        Measure(textName, lineGap);
-
-                
-
-                        Measure(textBrandModel, lineGap * 2); // Extra gap
-
-                
-
-                        Measure(textSummary, lineGap * 2);
-
-                
-
-                        
-
-                
-
-                        // Footer Block
-
-                
-
-                        Measure(textDates1, 2);
-
-                
-
-                        Measure(textDates2, lineGap);
-
-                
-
-                        Measure(textOwner, lineGap);
-
-                
-
-                        Measure(textNote, 0);
-
-                
-
-                
-
-                
-
-                        // Final Dimensions
-
-                
-
-                        // Height is Max of Text block or QR Code
-
-                
-
-                        double contentHeight = Math.Max(currentTextH, qrSize);
-
-                
-
-                        double finalHeight = contentHeight + (padding * 2);
-
-                
-
-                
-
-                
-
-                        // Width is Text + Gap + QR
-
-                
-
-                        double finalWidth = padding + maxTextW + gap + qrSize + padding;
-
-                
-
-                
-
-                
-
-                        // Ensure integers
-
-                
-
-                        int renderWidth = Width;
-
-                
-
-                        int renderHeight = Height;
-
-                
-
-                
-
-                
-
-                
-
-                
-
-                        // --- 3. DRAW ---
-
-                
-
-                
-
-                
-
-                        var drawingVisual = new DrawingVisual();
-
-                
-
-                        using (DrawingContext dc = drawingVisual.RenderOpen())
-
-                
-
-                        {
-
-                
-
-                            // Background
-
-                
-
-                            dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, renderWidth, renderHeight));
-
-                
-
-                            // Border
-
-                
-
-                            dc.DrawRectangle(null, new Pen(Brushes.LightGray, 1 * ScaleFactor), new Rect(0, 0, renderWidth, renderHeight));
-
-                
-
-                
-
-                
-
-                            // Draw QR (Right Aligned vertically centered)
-
-                
-
-                            double qrX = renderWidth - padding - qrSize;
-
-                
-
-                            double qrY = (renderHeight - qrSize) / 2;
-
-                
-
-                
-
-                
-
-                            string qrContent = $"ID: {device.Id}\nAd: {device.DeviceName}\nSahibi: {device.OwnerName}\nMarka: {device.Brand}\nModel: {device.Model}\nNot: {maintenanceNote}";
-
-                
-
-                            QRCodeGenerator qrGenerator = new QRCodeGenerator();
-
-                
-
-                            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrContent, QRCodeGenerator.ECCLevel.Q);
-
-                
-
-                            QRCode qrCode = new QRCode(qrCodeData);
-
-                
-
-                            using (var qrBitmap = qrCode.GetGraphic(20)) 
-
-                
-
-                            {
-
-                
-
-                                var qrImageSource = ConvertBitmapToImageSource(qrBitmap);
-
-                
-
-                                dc.DrawImage(qrImageSource, new Rect(qrX, qrY, qrSize, qrSize));
-
-                
-
-                            }
-
-                
-
-                            
-
-                
-
-                            // Draw Text & Logo (Left Aligned vertically centered logic)
-
-                
-
-                            double textBlockY = padding;
-
-                
-
-                            if (textBlockY < padding) textBlockY = padding; 
-
-                
-
-                            
-
-                
-
-                            double cursorY = textBlockY;
-
-                
-
-                            double cursorX = padding;
-
-                
-
-                
-
-                
-
-                            // Draw Logo at the top of the text block
-
-                
-
-                            if (File.Exists(logoPath))
-
-                
-
-                            {
-
-                
-
-                                try
-
-                
-
-                                {
-
-                
-
-                                    BitmapImage logoImage = new BitmapImage();
-
-                
-
-                                    logoImage.BeginInit();
-
-                
-
-                                    logoImage.UriSource = new Uri(logoPath);
-
-                
-
-                                    logoImage.CacheOption = BitmapCacheOption.OnLoad;
-
-                
-
-                                    logoImage.EndInit();
-
-                
-
-                                    double logoW = logoH;
-                                    dc.DrawImage(logoImage, new Rect(cursorX, cursorY, logoW, logoH));
-
-                                    if (textTitle != null)
-                                    {
-                                        double titleX = cursorX + logoW + (10 * ScaleFactor);
-                                        double titleY = cursorY + (logoH - textTitle.Height) / 2;
-                                        dc.DrawText(textTitle, new Point(titleX, titleY));
-                                    }
-
-                
-
-                                    cursorY += logoH + (10 * ScaleFactor);
-
-                
-
-                                }
-
-                
-
-                                catch { }
-
-                
-
-                            }
-
-                
-
-                
-
-                
-
-                            void Draw(FormattedText? ft, double marginBottom = 0)
-
-                
-
-                            {
-
-                
-
-                                if (ft == null) return;
-
-                
-
-                                dc.DrawText(ft, new Point(cursorX, cursorY));
-
-                
-
-                                cursorY += ft.Height + marginBottom;
-
-                
-
-                            }
-
-                
-
-                
-
-                
-
-                            Draw(textId, lineGap);
-
-                    Draw(textName, lineGap);
-
-                    Draw(textBrandModel, lineGap * 2);
-
-                    Draw(textSummary, lineGap * 2);
-
-                    Draw(textDates1, 2);
-
-                    Draw(textDates2, lineGap);
-
-                    Draw(textOwner, lineGap);
-
-                    Draw(textNote, 0);
-
-                }
-
-        
-
-                // Render to Bitmap
-
-                RenderTargetBitmap rtb = new RenderTargetBitmap(renderWidth, renderHeight, 96, 96, PixelFormats.Pbgra32);
-
-                rtb.Render(drawingVisual);
-
-        
-
-                // Save
-
-                var encoder = new PngBitmapEncoder();
-
-                encoder.Frames.Add(BitmapFrame.Create(rtb));
-
-        
-
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-
-                {
-
-                    encoder.Save(stream);
-
-                }
-
-        
-
-                return fullPath;
-
+                var qrImageSource = ConvertBitmapToImageSource(qrBitmap);
+                dc.DrawImage(qrImageSource, new Rect(qrX, qrY, qrSize, qrSize));
             }
+
+            double textBlockY = padding;
+            if (textBlockY < padding) textBlockY = padding; 
+
+            double cursorY = textBlockY;
+            double cursorX = padding;
+
+            if (File.Exists(logoPath))
+            {
+                try
+                {
+                    BitmapImage logoImage = new BitmapImage();
+                    logoImage.BeginInit();
+                    logoImage.UriSource = new Uri(logoPath);
+                    logoImage.CacheOption = BitmapCacheOption.OnLoad;
+                    logoImage.EndInit();
+
+                    double logoW = logoH;
+                    dc.DrawImage(logoImage, new Rect(cursorX, cursorY, logoW, logoH));
+
+                    if (textTitle != null)
+                    {
+                        double titleX = cursorX + logoW + (10 * ScaleFactor);
+                        double titleY = cursorY + (logoH - textTitle.Height) / 2;
+                        dc.DrawText(textTitle, new Point(titleX, titleY));
+                    }
+
+                    cursorY += logoH + (10 * ScaleFactor);
+                }
+                catch { }
+            }
+
+            void Draw(FormattedText? ft, double marginBottom = 0)
+            {
+                if (ft == null) return;
+                dc.DrawText(ft, new Point(cursorX, cursorY));
+                cursorY += ft.Height + marginBottom;
+            }
+
+            Draw(textId, lineGap);
+            Draw(textName, lineGap);
+            Draw(textBrandModel, lineGap * 2);
+            Draw(textSummary, lineGap * 2);
+            Draw(textDates1, 2);
+            Draw(textDates2, lineGap);
+            Draw(textOwner, lineGap);
+            Draw(textNote, 0);
+        }
+
+        RenderTargetBitmap rtb = new RenderTargetBitmap(renderWidth, renderHeight, 96, 96, PixelFormats.Pbgra32);
+        rtb.Render(drawingVisual);
+
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(rtb));
+
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            encoder.Save(stream);
+        }
+
+        return fullPath;
+    }
 
     private static void DrawText(DrawingContext dc, string text, Typeface typeface, double size, Brush brush, Point location)
     {

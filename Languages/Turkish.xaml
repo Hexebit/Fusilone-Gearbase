@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=netstandard">
   <!-- Minimal Turkish resources; expand as needed -->
-  <sys:String x:Key="AppTitle">Fusilone Cihaz Yönetimi</sys:String>
+  <sys:String x:Key="AppTitle">Fusilone Gearbase Cihaz Yönetimi</sys:String>
   <sys:String x:Key="AppSubtitle">Envanter Yönetimi</sys:String>
   <sys:String x:Key="Menu_Dashboard">Dashboard</sys:String>
   <sys:String x:Key="Menu_DeviceSearch">Cihaz Sorgulama</sys:String>
@@ -27,6 +27,13 @@
   <sys:String x:Key="Stat_TotalValue">Toplam Değer</sys:String>
   <sys:String x:Key="Inventory_List">ENVANTER LİSTESİ</sys:String>
   <sys:String x:Key="Device_Distribution">CİHAZ DAĞILIMI</sys:String>
+  <sys:String x:Key="Chart_NeedTwoCategories">Grafik için en az 2 kategori gerekli</sys:String>
+  <sys:String x:Key="Empty_Inventory_Title">Henüz cihaz eklenmemiş</sys:String>
+  <sys:String x:Key="Empty_Inventory_Desc">İlk cihazınızı ekleyerek envanteri oluşturmaya başlayın.</sys:String>
+  <sys:String x:Key="Empty_Inventory_Cta">Yeni Cihaz Ekle</sys:String>
+  <sys:String x:Key="Empty_Filtered">Eşleşen cihaz bulunamadı</sys:String>
+  <sys:String x:Key="Empty_Filtered_Desc">Arama veya filtre kriterlerinizi değiştirmeyi deneyin.</sys:String>
+  <sys:String x:Key="Detail_WindowTitle">Cihaz Detayları</sys:String>
   <sys:String x:Key="Search_Hint">Arama...</sys:String>
   <sys:String x:Key="Customers_Title">MÜŞTERİLER</sys:String>
   <sys:String x:Key="Customers_Search">Müşteri ara...</sys:String>
@@ -47,7 +54,7 @@
   <sys:String x:Key="Kanban_Pending">BEKLEYEN / PASİF</sys:String>
   <sys:String x:Key="Kanban_InProgress">İŞLEMDE / ARIZALI</sys:String>
   <sys:String x:Key="Kanban_Ready">HAZIR / AKTİF</sys:String>
-  <sys:String x:Key="VersionLabel">v0.9.3 Beta</sys:String>
+  <sys:String x:Key="VersionLabel">V1.0.0 Final</sys:String>
   <sys:String x:Key="Col_Id">ID</sys:String>
   <sys:String x:Key="Col_Type">TÜR</sys:String>
   <sys:String x:Key="Col_BrandModel">MARKA MODEL</sys:String>
@@ -148,19 +155,21 @@
   <sys:String x:Key="Warranty_Expired">Bitti</sys:String>
   <sys:String x:Key="About_Tab_About">HAKKINDA</sys:String>
   <sys:String x:Key="About_Tab_Release">SÜRÜM NOTLARI</sys:String>
-  <sys:String x:Key="About_Title">FUSILONE</sys:String>
+  <sys:String x:Key="About_Title">FUSILONE GEARBASE</sys:String>
   <sys:String x:Key="About_Subtitle">Device Management System</sys:String>
-  <sys:String x:Key="About_Version">v0.9.3 (Beta Release)</sys:String>
+  <sys:String x:Key="About_Version">V1.0.0 (Final Release)</sys:String>
   <sys:String x:Key="About_Developer">GELİŞTİRİCİ</sys:String>
   <sys:String x:Key="About_Contributors">KATKIDA BULUNANLAR &amp; TEST EKİBİ</sys:String>
-  <sys:String x:Key="About_ReleaseTitle">v0.9.3 Beta - Yenilikler</sys:String>
-  <sys:String x:Key="About_ReleaseNote1">• Cihaz ekle sayfasındaki tasarım hatası düzeltildi. Artık form ana içerik alanına daha iyi oturuyor ve tam ekrana sığıyor.</sys:String>
-  <sys:String x:Key="About_ReleaseNote2">• Cihaz tarihleri güncellendi: Sisteme eklenme tarihi ve üretim tarihi eklendi. Bu alanlara Cihaz Ekle sayfasındaki Finans &amp; Bakım bölümünden erişebilirsiniz.</sys:String>
-  <sys:String x:Key="About_ReleaseNote3">• Garanti Takip Özelliği eklendi: Öncelik satın alım tarihi, yoksa üretim tarihi, o da yoksa sisteme eklenme tarihi olacak şekilde 24 aylık garanti süresi hesaplanır (kullanıcı süreyi değiştirebilir). Sonuç cihaz detaylarında rozet olarak gösterilir.</sys:String>
-  <sys:String x:Key="About_ReleasePrev">v0.9.2 Final - Önceki Sürüm</sys:String>
-  <sys:String x:Key="About_ReleasePrevDesc">• Tasarım iyileştirmeleri, İngilizce dil desteği, ayrıntılı arama, cihaz güncelleme detayları, QR kod optimizasyonu, müşteri yönetimi, yedekleme/dışa aktarma ve ekstralar not alanı eklendi.</sys:String>
-  <sys:String x:Key="About_ReleasePrev2">v0.9.1 Beta - Önceki Sürüm</sys:String>
-  <sys:String x:Key="About_ReleasePrev2Desc">• Responsive çözüm, tema desteği, AO kategorisi, QR etiket revizyonu.</sys:String>
+  <sys:String x:Key="About_ReleaseTitle">V1.0.0 - Yenilikler</sys:String>
+  <sys:String x:Key="About_ReleaseNote1">• "Fusilone" olan uygulama ismi "Fusilone Gearbase" olarak değiştirildi.</sys:String>
+  <sys:String x:Key="About_ReleaseNote2">• Tasarım dilinde köklü değişikliklere gidildi, böylece aydınlık ve karanlık modlarda daha hoş bir tasarım elde edildi. Logo, menüler ve diğer tüm görsel öğeler yenilendi.</sys:String>
+  <sys:String x:Key="About_ReleaseNote3">• Arka planda detaylı kod temizliği yapıldı, performans ve güvenlik sorunları çözüldü.</sys:String>
+  <sys:String x:Key="About_ReleasePrev">v0.9.3 Beta - Önceki Sürüm</sys:String>
+  <sys:String x:Key="About_ReleasePrevDesc">• Cihaz ekle sayfası tasarım düzeltmesi, sisteme eklenme ve üretim tarihi alanları, 24 aylık garanti takip özelliği ve garanti rozeti eklendi.</sys:String>
+  <sys:String x:Key="About_ReleasePrev2">v0.9.2 Final - Önceki Sürüm</sys:String>
+  <sys:String x:Key="About_ReleasePrev2Desc">• Tasarım iyileştirmeleri, İngilizce dil desteği, ayrıntılı arama, cihaz güncelleme detayları, QR kod optimizasyonu, müşteri yönetimi, yedekleme/dışa aktarma ve ekstralar not alanı eklendi.</sys:String>
+  <sys:String x:Key="About_ReleasePrev3">v0.9.1 Beta - Önceki Sürüm</sys:String>
+  <sys:String x:Key="About_ReleasePrev3Desc">• Responsive çözüm, tema desteği, AO kategorisi, QR etiket revizyonu.</sys:String>
   <sys:String x:Key="About_Copyright">Tüm Hakları Saklıdır © 2026</sys:String>
   <sys:String x:Key="About_Close">ANLADIM</sys:String>
 </ResourceDictionary>

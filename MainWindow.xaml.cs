@@ -5,14 +5,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Text.Json;
-using System.Text;
-using System.IO;
-using System.IO.Compression;
 using Microsoft.Win32;
-using ClosedXML.Excel;
 using Fusilone.Data;
 using Fusilone.Models;
 using Fusilone.Helpers;
+using Serilog;
 using MaterialDesignThemes.Wpf;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
@@ -41,63 +38,6 @@ public partial class MainWindow : Window
         public string TotalCostDisplay => TotalCost.ToString("C0");
     }
 
-    // Alan Tanımları
-    private readonly Dictionary<string, List<string>> _fieldDefinitions = new()
-    {
-        { "PC", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "Harici Ekran Kartı Markası", "Harici Ekran Kartı Modeli", "Harici Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)", "RAM Modeli (Slot 3)", "RAM Modeli (Slot 4)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "PSU Markası", "PSU Modeli", "PSU Gücü", "Soğutma Tipi",
-            "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu", "Wifi Desteği", "Bluetooth Desteği"
-        }},
-        { "AO", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "Harici Ekran Kartı Markası", "Harici Ekran Kartı Modeli", "Harici Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)", "RAM Modeli (Slot 3)", "RAM Modeli (Slot 4)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "Güç Adaptörü Markası", "Güç Adaptörü Modeli", "Adaptör Gücü",
-            "Soğutma Tipi", "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu",
-            "Wifi Desteği", "Bluetooth Desteği", "Monitör Panel Tipi", "Monitör Ekran Çözünürlüğü", "Kamera desteği"
-        }},
-        { "LP", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "Harici Ekran Kartı Markası", "Harici Ekran Kartı Modeli", "Harici Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)", "RAM Modeli (Slot 3)", "RAM Modeli (Slot 4)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "Güç Adaptörü Markası", "Güç Adaptörü Modeli", "Adaptör Gücü",
-            "Soğutma Tipi", "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu",
-            "Wifi Desteği", "Bluetooth Desteği", "Monitör Panel Tipi", "Monitör Ekran Çözünürlüğü", "Kamera desteği"
-        }},
-        { "ET", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "Soğutma Tipi", "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu",
-            "Wifi Desteği", "Bluetooth Desteği", "Monitör Panel Tipi", "Monitör Ekran Çözünürlüğü", "Kamera desteği"
-        }},
-        { "MN", new List<string> { "Ekran Çözünürlüğü", "Ekran Boyutu", "Panel Tipi", "Desteklenen Görüntü Portları", "Adaptör Türü", "Hoparlör özelliğinin olup olmadığı", "Yenileme Hızı" } },
-        { "PH", new List<string> { "CPU Markası", "Ram Miktarı", "Depolama Miktarı", "İşletim Sistemi", "Batarya Kapasitesi", "IMEI", "Şarj Port Türü" } },
-        { "TB", new List<string> { "CPU Markası", "Ram Miktarı", "Depolama Miktarı", "İşletim Sistemi", "Batarya Kapasitesi", "IMEI", "Şarj Port Türü" } },
-        { "PR", new List<string> { "Yazıcı Türü (Toner ya da Kartuş)", "Renk Desteği", "Fonksiyonlar (Sadece yazıcı ya da Yazıcı ve Tarayıcı gibi)", "Sarf Malzemesi Modeli", "Bağlantı Türü" } },
-        { "RT", new List<string> { "Router Türü (Modem, Router ya da Bridge gibi)", "WanType", "Admin kullanıcı adı", "wifi Bandı" } },
-        { "PJ", new List<string> { "Çözünürlük", "Yenileme Hızı", "Desteklenen Görüntü Portları", "Adaptör Türü" } },
-        { "GC", new List<string> { "Konsol Nesli", "Depolama Miktarı", "Optik Sürücü Durumu", "Kontrolcü Sayısı", "Çevrimiçi Servis", "Wifi Desteği", "Bluetooth Desteği" } }
-    };
-
-    private readonly List<string> _basicFields = new() {
-        "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)"
-    };
-
     private string _currentViewKey = "View_Dashboard";
 
     public MainWindow()
@@ -122,28 +62,12 @@ public partial class MainWindow : Window
         }
     }
 
-    // --- WINDOW CONTROL ---
-    private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-        try
-        {
-            if (System.Windows.Input.Mouse.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-            {
-                this.DragMove();
-            }
-        }
-        catch
-        {
-            // Ignore DragMove failures when mouse state is not valid
-        }
-    }
-
     private void BackupButton_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new SaveFileDialog
         {
             Filter = "ZIP (*.zip)|*.zip",
-            FileName = $"Fusilone-Backup-{DateTime.Now:yyyyMMdd-HHmmss}.zip"
+            FileName = $"Gearbase-Backup-{DateTime.Now:yyyyMMdd-HHmmss}.zip"
         };
 
         if (dialog.ShowDialog() != true)
@@ -153,37 +77,17 @@ public partial class MainWindow : Window
 
         try
         {
-            string dbPath = PathHelper.GetDatabasePath();
-            string imagesPath = PathHelper.GetImagesPath();
-            string labelsPath = PathHelper.GetLabelsPath();
-
-            if (File.Exists(dialog.FileName))
-            {
-                File.Delete(dialog.FileName);
-            }
-
-            using var zip = ZipFile.Open(dialog.FileName, ZipArchiveMode.Create);
-
-            if (File.Exists(dbPath))
-            {
-                zip.CreateEntryFromFile(dbPath, "Data/fusilone.db", CompressionLevel.Optimal);
-            }
-
-            AddDirectoryToZip(zip, imagesPath, "Images");
-            AddDirectoryToZip(zip, labelsPath, "Etiketler");
-
-            var metaEntry = zip.CreateEntry("backup-info.txt", CompressionLevel.Optimal);
-            using (var writer = new StreamWriter(metaEntry.Open(), Encoding.UTF8))
-            {
-                writer.WriteLine("Fusilone Backup");
-                writer.WriteLine($"Created: {DateTime.Now:O}");
-                writer.WriteLine($"Contains: Data/fusilone.db, Images, Etiketler");
-            }
+            DeviceExporter.CreateBackup(
+                dialog.FileName,
+                PathHelper.GetDatabasePath(),
+                PathHelper.GetImagesPath(),
+                PathHelper.GetLabelsPath());
 
             MessageBox.Show("Yedekleme tamamlandı.");
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Yedekleme hatası");
             MessageBox.Show($"Yedekleme hatası: {ex.Message}");
         }
     }
@@ -193,7 +97,7 @@ public partial class MainWindow : Window
         var dialog = new SaveFileDialog
         {
             Filter = "CSV (*.csv)|*.csv",
-            FileName = $"Fusilone-Devices-{DateTime.Now:yyyyMMdd-HHmmss}.csv"
+            FileName = $"Gearbase-Devices-{DateTime.Now:yyyyMMdd-HHmmss}.csv"
         };
 
         if (dialog.ShowDialog() != true)
@@ -203,38 +107,12 @@ public partial class MainWindow : Window
 
         try
         {
-            var devices = _dbHelper.GetAllDevices();
-            using var writer = new StreamWriter(dialog.FileName, false, Encoding.UTF8);
-
-            writer.WriteLine("Id,Type,Brand,Model,SerialNumber,DeviceName,OwnerName,OwnerCustomerId,Status,Cost,PurchaseDate,LastMaintenanceDate,NextMaintenanceDate,MaintenancePeriodMonths,ImageUrl,TechSpecs");
-
-            foreach (var d in devices)
-            {
-                writer.WriteLine(string.Join(",", new[]
-                {
-                    CsvEscape(d.Id),
-                    CsvEscape(d.Type),
-                    CsvEscape(d.Brand),
-                    CsvEscape(d.Model),
-                    CsvEscape(d.SerialNumber),
-                    CsvEscape(d.DeviceName),
-                    CsvEscape(d.OwnerName),
-                    CsvEscape(d.OwnerCustomerId?.ToString() ?? ""),
-                    CsvEscape(d.Status),
-                    CsvEscape(d.Cost.ToString("0.##")),
-                    CsvEscape(d.PurchaseDate.ToString("o")),
-                    CsvEscape(d.LastMaintenanceDate.ToString("o")),
-                    CsvEscape(d.NextMaintenanceDate.ToString("o")),
-                    CsvEscape(d.MaintenancePeriodMonths.ToString()),
-                    CsvEscape(d.ImageUrl),
-                    CsvEscape(d.TechSpecs)
-                }));
-            }
-
+            DeviceExporter.ExportCsv(_dbHelper.GetAllDevices(), dialog.FileName);
             MessageBox.Show("CSV dışa aktarımı tamamlandı.");
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "CSV dışa aktarım hatası");
             MessageBox.Show($"CSV dışa aktarım hatası: {ex.Message}");
         }
     }
@@ -244,7 +122,7 @@ public partial class MainWindow : Window
         var dialog = new SaveFileDialog
         {
             Filter = "Excel (*.xlsx)|*.xlsx",
-            FileName = $"Fusilone-Devices-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx"
+            FileName = $"Gearbase-Devices-{DateTime.Now:yyyyMMdd-HHmmss}.xlsx"
         };
 
         if (dialog.ShowDialog() != true)
@@ -254,90 +132,15 @@ public partial class MainWindow : Window
 
         try
         {
-            var devices = _dbHelper.GetAllDevices();
-            using var workbook = new XLWorkbook();
-            var ws = workbook.Worksheets.Add("Devices");
-
-            var headers = new[]
-            {
-                "Id", "Type", "Brand", "Model", "SerialNumber", "DeviceName", "OwnerName", "OwnerCustomerId", "Status",
-                "Cost", "PurchaseDate", "LastMaintenanceDate", "NextMaintenanceDate", "MaintenancePeriodMonths", "ImageUrl", "TechSpecs"
-            };
-
-            for (int i = 0; i < headers.Length; i++)
-            {
-                ws.Cell(1, i + 1).Value = headers[i];
-                ws.Cell(1, i + 1).Style.Font.Bold = true;
-            }
-
-            int row = 2;
-            foreach (var d in devices)
-            {
-                ws.Cell(row, 1).Value = d.Id;
-                ws.Cell(row, 2).Value = d.Type;
-                ws.Cell(row, 3).Value = d.Brand;
-                ws.Cell(row, 4).Value = d.Model;
-                ws.Cell(row, 5).Value = d.SerialNumber;
-                ws.Cell(row, 6).Value = d.DeviceName;
-                ws.Cell(row, 7).Value = d.OwnerName;
-                ws.Cell(row, 8).Value = d.OwnerCustomerId?.ToString() ?? "";
-                ws.Cell(row, 9).Value = d.Status;
-                ws.Cell(row, 10).Value = (double)d.Cost;
-                ws.Cell(row, 11).Value = d.PurchaseDate;
-                ws.Cell(row, 12).Value = d.LastMaintenanceDate;
-                ws.Cell(row, 13).Value = d.NextMaintenanceDate;
-                ws.Cell(row, 14).Value = d.MaintenancePeriodMonths;
-                ws.Cell(row, 15).Value = d.ImageUrl;
-                ws.Cell(row, 16).Value = d.TechSpecs;
-                row++;
-            }
-
-            ws.Columns().AdjustToContents();
-            workbook.SaveAs(dialog.FileName);
-
+            DeviceExporter.ExportExcel(_dbHelper.GetAllDevices(), dialog.FileName);
             MessageBox.Show("Excel dışa aktarımı tamamlandı.");
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Excel dışa aktarım hatası");
             MessageBox.Show($"Excel dışa aktarım hatası: {ex.Message}");
         }
     }
-
-    private static void AddDirectoryToZip(ZipArchive zip, string sourceDirectory, string entryRoot)
-    {
-        if (!Directory.Exists(sourceDirectory))
-        {
-            return;
-        }
-
-        var files = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
-        foreach (var file in files)
-        {
-            var relativePath = Path.GetRelativePath(sourceDirectory, file);
-            var entryPath = Path.Combine(entryRoot, relativePath).Replace('\\', '/');
-            zip.CreateEntryFromFile(file, entryPath, CompressionLevel.Optimal);
-        }
-    }
-
-    private static string CsvEscape(string value)
-    {
-        if (value == null)
-        {
-            return "";
-        }
-
-        bool mustQuote = value.Contains(',') || value.Contains('"') || value.Contains('\n') || value.Contains('\r');
-        if (mustQuote)
-        {
-            value = value.Replace("\"", "\"\"");
-            return $"\"{value}\"";
-        }
-
-        return value;
-    }
-
-    private void CloseButton_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
-    private void MinimizeButton_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
 
     private void LangTR_Click(object sender, RoutedEventArgs e)
     {
@@ -401,53 +204,32 @@ public partial class MainWindow : Window
     }
 
     // --- NAVIGATION LOGIC ---
-    private void ShowList_Click(object sender, RoutedEventArgs e)
-    {
-        if (DeviceListTransitioner == null || AddDeviceTransitioner == null || SearchTransitioner == null || MaintenanceTransitioner == null || CustomersTransitioner == null) return;
-        
-        SetViewTitle("View_Dashboard");
-        HideAllTransitions();
-        DeviceListTransitioner.Visibility = Visibility.Visible;
-        LoadDeviceList(); 
-    }
+    private void ShowList_Click(object sender, RoutedEventArgs e) =>
+        SwitchView("View_Dashboard", DeviceListTransitioner, LoadDeviceList);
 
-    private void ShowSearch_Click(object sender, RoutedEventArgs e)
-    {
-        if (DeviceListTransitioner == null || AddDeviceTransitioner == null || SearchTransitioner == null || MaintenanceTransitioner == null || CustomersTransitioner == null) return;
-        
-        SetViewTitle("View_DeviceSearch");
-        HideAllTransitions();
-        SearchTransitioner.Visibility = Visibility.Visible;
-        LoadDeviceList();
-    }
+    private void ShowSearch_Click(object sender, RoutedEventArgs e) =>
+        SwitchView("View_DeviceSearch", SearchTransitioner, LoadDeviceList);
 
-    private void ShowAdd_Click(object sender, RoutedEventArgs e)
-    {
-        if (DeviceListTransitioner == null || AddDeviceTransitioner == null || SearchTransitioner == null || MaintenanceTransitioner == null || CustomersTransitioner == null) return;
-        
-        SetViewTitle("View_AddDevice");
-        HideAllTransitions();
-        AddDeviceTransitioner.Visibility = Visibility.Visible;
-    }
+    private void ShowAdd_Click(object sender, RoutedEventArgs e) =>
+        SwitchView("View_AddDevice", AddDeviceTransitioner);
 
-    private void MaintenanceButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (DeviceListTransitioner == null || AddDeviceTransitioner == null || SearchTransitioner == null || MaintenanceTransitioner == null || CustomersTransitioner == null) return;
-        
-        SetViewTitle("View_Maintenance");
-        HideAllTransitions();
-        MaintenanceTransitioner.Visibility = Visibility.Visible;
-        LoadMaintenanceList();
-    }
+    private void MaintenanceButton_Click(object sender, RoutedEventArgs e) =>
+        SwitchView("View_Maintenance", MaintenanceTransitioner, LoadMaintenanceList);
 
-    private void ShowCustomers_Click(object sender, RoutedEventArgs e)
-    {
-        if (DeviceListTransitioner == null || AddDeviceTransitioner == null || SearchTransitioner == null || MaintenanceTransitioner == null || CustomersTransitioner == null) return;
+    private void ShowCustomers_Click(object sender, RoutedEventArgs e) =>
+        SwitchView("View_Customers", CustomersTransitioner, () => LoadCustomersList());
 
-        SetViewTitle("View_Customers");
+    // Tüm görünüm geçişlerinin ortak iskeleti: başlığı ayarla, hepsini gizle,
+    // hedefi göster ve varsa ilgili veriyi yükle.
+    private void SwitchView(string titleKey, UIElement target, Action? onShown = null)
+    {
+        if (DeviceListTransitioner == null || AddDeviceTransitioner == null || SearchTransitioner == null
+            || MaintenanceTransitioner == null || CustomersTransitioner == null) return;
+
+        SetViewTitle(titleKey);
         HideAllTransitions();
-        CustomersTransitioner.Visibility = Visibility.Visible;
-        LoadCustomersList();
+        target.Visibility = Visibility.Visible;
+        onShown?.Invoke();
     }
 
     private void ShowAbout_Click(object sender, RoutedEventArgs e)
@@ -455,6 +237,40 @@ public partial class MainWindow : Window
         var aboutWin = new AboutWindow();
         aboutWin.Owner = this;
         aboutWin.ShowDialog();
+    }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        // Maximize durumunda pencere kenarları ekran dışına taşar (7px); telafi et
+        MainRootBorder.Margin = WindowState == WindowState.Maximized ? new Thickness(7) : new Thickness(0);
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        // İlk açılışta pencere ekranın çalışma alanına sığmıyorsa küçült ve ortala
+        var workArea = SystemParameters.WorkArea;
+        if (Width > workArea.Width) Width = workArea.Width;
+        if (Height > workArea.Height) Height = workArea.Height;
+        Left = workArea.Left + (workArea.Width - Width) / 2;
+        Top = workArea.Top + (workArea.Height - Height) / 2;
+    }
+
+    private void MinButton_Click(object sender, RoutedEventArgs e)
+    {
+        this.WindowState = WindowState.Minimized;
+    }
+
+    private void MaxButton_Click(object sender, RoutedEventArgs e)
+    {
+        this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    }
+
+    private void TitleBarClose_Click(object sender, RoutedEventArgs e)
+    {
+        this.Close();
     }
 
     private void ToggleTheme_Click(object sender, RoutedEventArgs e)
@@ -472,6 +288,23 @@ public partial class MainWindow : Window
         }
 
         paletteHelper.SetTheme(theme);
+
+        // Swap Fusilone theme dictionary
+        var app = (App)Application.Current;
+        var dictionaries = app.Resources.MergedDictionaries;
+        var fusiloneDict = dictionaries.FirstOrDefault(d =>
+            d.Source?.OriginalString.Contains("Fusilone.Dark") == true ||
+            d.Source?.OriginalString.Contains("Fusilone.Light") == true);
+
+        if (fusiloneDict != null)
+        {
+            int index = dictionaries.IndexOf(fusiloneDict);
+            string newTheme = theme.GetBaseTheme() == BaseTheme.Dark ? "Dark" : "Light";
+            dictionaries[index] = new ResourceDictionary
+            {
+                Source = new Uri($"pack://application:,,,/Fusilone;component/Themes/Fusilone.{newTheme}.xaml")
+            };
+        }
     }
 
     private void HideAllTransitions()
@@ -491,7 +324,10 @@ public partial class MainWindow : Window
             var sorted = all.OrderBy(d => d.NextMaintenanceDate).ToList();
             MaintenanceDataGrid.ItemsSource = sorted;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Bakım listesi yüklenirken hata");
+        }
     }
 
     private void LoadCustomersList(string? filter = null)
@@ -531,7 +367,10 @@ public partial class MainWindow : Window
                 CustomerDevicesDataGrid.ItemsSource = new List<Device>();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Müşteri listesi yüklenirken hata");
+        }
     }
 
     private void CustomersSearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -557,14 +396,19 @@ public partial class MainWindow : Window
 
         if (KanbanToggle.IsChecked == true)
         {
+            // Kanban modu: liste ve boş durum panelleri gizlenir
             DevicesDataGrid.Visibility = Visibility.Collapsed;
+            if (InventoryEmptyState != null) InventoryEmptyState.Visibility = Visibility.Collapsed;
+            if (InventoryFilteredEmptyState != null) InventoryFilteredEmptyState.Visibility = Visibility.Collapsed;
             KanbanBoard.Visibility = Visibility.Visible;
             KanbanBoard.SetDevices(_allDevices);
         }
         else
         {
-            DevicesDataGrid.Visibility = Visibility.Visible;
+            // Liste modu: görünürlüğü boş duruma göre ApplyFilters belirler
             KanbanBoard.Visibility = Visibility.Collapsed;
+            DevicesDataGrid.Visibility = Visibility.Visible;
+            UpdateInventoryEmptyState((DevicesDataGrid.ItemsSource as System.Collections.ICollection)?.Count ?? 0);
         }
     }
 
@@ -572,59 +416,11 @@ public partial class MainWindow : Window
     {
         try
         {
-            _allDevices = _dbHelper.GetAllDevices(); // Cache data
-            
-            // --- STATISTICS ---
-            if (StatTotalCount != null) 
-                StatTotalCount.Text = _allDevices.Count.ToString();
-            
-            if (StatActiveCount != null)
-                StatActiveCount.Text = _allDevices.Count(d => d.Status == "Aktif").ToString();
-            
-            if (StatMaintDueCount != null)
-                StatMaintDueCount.Text = _allDevices.Count(d => d.NextMaintenanceDate <= DateTime.Now.AddDays(7)).ToString(); 
+            _allDevices = _dbHelper.GetAllDevices(); // Veriyi önbelleğe al
 
-            if (StatTotalValue != null)
-                StatTotalValue.Text = _allDevices.Sum(d => d.Cost).ToString("C0");
+            UpdateStatistics();
+            UpdateDistributionChart();
 
-            // --- CHART ---
-            if (DeviceTypeChart != null)
-            {
-                var typeGroups = _allDevices.GroupBy(d => d.Type)
-                                            .Select(g => new { Type = g.Key, Count = g.Count() })
-                                            .ToList();
-
-                // Deterministic colors per device type so colors don't shuffle each refresh
-                SKColor GetColor(string t)
-                {
-                    var map = new Dictionary<string, SKColor>(StringComparer.OrdinalIgnoreCase)
-                    {
-                        { "PC", new SKColor(0x4E,0xAE,0xF0) },
-                        { "LP", new SKColor(0xFF,0xA7,0x26) },
-                        { "AO", new SKColor(0x9C,0x27,0xB0) },
-                        { "PH", new SKColor(0x03,0xA9,0xF4) },
-                        { "ET", new SKColor(0xF4,0x43,0x36) },
-                        { "MN", new SKColor(0x8B,0xC3,0x4A) }
-                    };
-                    if (map.TryGetValue(t, out var c)) return c;
-                    var h = Math.Abs(t.GetHashCode());
-                    byte r = (byte)((h >> 16) & 0xFF);
-                    byte g = (byte)((h >> 8) & 0xFF);
-                    byte b = (byte)(h & 0xFF);
-                    return new SKColor(r, g, b);
-                }
-
-                var series = typeGroups.Select(group => new PieSeries<int>
-                {
-                    Name = group.Type,
-                    Values = new[] { group.Count },
-                    Fill = new SolidColorPaint(GetColor(group.Type))
-                }).ToArray();
-
-                DeviceTypeChart.Series = series;
-            }
-
-            // --- KANBAN REFRESH ---
             if (KanbanBoard != null && KanbanBoard.Visibility == Visibility.Visible)
             {
                 KanbanBoard.SetDevices(_allDevices);
@@ -634,7 +430,90 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Cihaz listesi yüklenirken hata");
             MessageBox.Show("Liste yüklenirken hata: " + ex.Message);
+        }
+    }
+
+    // Dashboard üstündeki 4 istatistik kartını günceller.
+    private void UpdateStatistics()
+    {
+        if (StatTotalCount != null)
+            StatTotalCount.Text = _allDevices.Count.ToString();
+
+        if (StatActiveCount != null)
+            StatActiveCount.Text = _allDevices.Count(d => d.Status == "Aktif").ToString();
+
+        if (StatMaintDueCount != null)
+        {
+            int maintDue = _allDevices.Count(d => d.NextMaintenanceDate <= DateTime.Now.AddDays(7));
+            StatMaintDueCount.Text = maintDue.ToString();
+
+            // Bakım bekleyen cihaz varsa chip danger renklerine geçer
+            if (MaintChip != null && MaintChipIcon != null)
+            {
+                string chipBg = maintDue > 0 ? "FslDangerFaint" : "FslSurface2";
+                string chipFg = maintDue > 0 ? "FslDanger" : "FslTextSecondary";
+                MaintChip.SetResourceReference(Border.BackgroundProperty, chipBg);
+                MaintChipIcon.SetResourceReference(Control.ForegroundProperty, chipFg);
+            }
+        }
+
+        if (StatTotalValue != null)
+            StatTotalValue.Text = _allDevices.Sum(d => d.Cost).ToString("C0");
+    }
+
+    // Fusilone teal skalasında seri renkleri; alfabetik tür sırasına göre atanır.
+    private static readonly SKColor[] ChartTealScale =
+    {
+        new(0x17, 0xA3, 0x98),
+        new(0x1F, 0xBF, 0xB2),
+        new(0x0F, 0x6E, 0x67),
+        new(0x6B, 0xD9, 0xCF),
+        new(0x12, 0x85, 0x7C)
+    };
+
+    // Cihaz dağılımı pastasını günceller. Tek kategori varsa grafik yerine boş durum gösterir.
+    private void UpdateDistributionChart()
+    {
+        if (DeviceTypeChart == null) return;
+
+        var typeGroups = _allDevices.GroupBy(d => d.Type)
+                                    .Select(g => new { Type = g.Key, Count = g.Count() })
+                                    .OrderBy(g => g.Type)
+                                    .ToList();
+
+        // Tek kategoriyle pasta grafik anlamsız: grafiği gizle, boş durum göster
+        if (typeGroups.Count < 2)
+        {
+            DeviceTypeChart.Visibility = Visibility.Collapsed;
+            if (ChartEmptyState != null)
+            {
+                ChartEmptyState.Visibility = Visibility.Visible;
+                if (ChartEmptyDetail != null)
+                    ChartEmptyDetail.Text = typeGroups.Count == 1
+                        ? $"{typeGroups[0].Type}: {typeGroups[0].Count}"
+                        : string.Empty;
+            }
+            return;
+        }
+
+        DeviceTypeChart.Visibility = Visibility.Visible;
+        if (ChartEmptyState != null)
+            ChartEmptyState.Visibility = Visibility.Collapsed;
+
+        DeviceTypeChart.Series = typeGroups.Select((group, i) => new PieSeries<int>
+        {
+            Name = group.Type,
+            Values = new[] { group.Count },
+            Fill = new SolidColorPaint(ChartTealScale[i % ChartTealScale.Length])
+        }).ToArray();
+
+        // Legend yazıları aktif temanın ikincil metin rengini alır
+        if (TryFindResource("FslTextSecondary") is SolidColorBrush legendBrush)
+        {
+            var lc = legendBrush.Color;
+            DeviceTypeChart.LegendTextPaint = new SolidColorPaint(new SKColor(lc.R, lc.G, lc.B));
         }
     }
 
@@ -738,6 +617,38 @@ public partial class MainWindow : Window
         var resultList = filtered.ToList();
         DevicesDataGrid.ItemsSource = resultList;
         SearchResultsDataGrid.ItemsSource = resultList;
+
+        UpdateInventoryEmptyState(resultList.Count);
+    }
+
+    // Envanter boş durumları: hiç cihaz yok / filtre eşleşmesi yok / normal liste
+    private void UpdateInventoryEmptyState(int visibleCount)
+    {
+        if (InventoryEmptyState == null || InventoryFilteredEmptyState == null || DevicesDataGrid == null)
+            return;
+
+        bool listMode = KanbanToggle == null || KanbanToggle.IsChecked != true;
+
+        if (_allDevices.Count == 0)
+        {
+            // Hiç cihaz yok: CTA'lı boş durum
+            InventoryEmptyState.Visibility = Visibility.Visible;
+            InventoryFilteredEmptyState.Visibility = Visibility.Collapsed;
+            DevicesDataGrid.Visibility = Visibility.Collapsed;
+        }
+        else if (visibleCount == 0)
+        {
+            // Cihaz var ama filtre eşleşmiyor
+            InventoryEmptyState.Visibility = Visibility.Collapsed;
+            InventoryFilteredEmptyState.Visibility = Visibility.Visible;
+            DevicesDataGrid.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            InventoryEmptyState.Visibility = Visibility.Collapsed;
+            InventoryFilteredEmptyState.Visibility = Visibility.Collapsed;
+            DevicesDataGrid.Visibility = listMode ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 
     private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -784,7 +695,7 @@ public partial class MainWindow : Window
         string typeContent = selectedItem.Content.ToString() ?? "";
         string typeCode = typeContent.Split(' ')[0]; // PC, LP, etc.
 
-        if (_fieldDefinitions.TryGetValue(typeCode, out var fields))
+        if (DeviceSpecFields.ByType.TryGetValue(typeCode, out var fields))
         {
             bool isComplexType = (typeCode == "PC" || typeCode == "LP" || typeCode == "ET");
             if (isComplexType) AdvancedSpecsExpander.Visibility = Visibility.Visible;
@@ -795,14 +706,12 @@ public partial class MainWindow : Window
                 {
                     Tag = field,
                     Margin = new Thickness(0, 0, 0, 15),
+                    Style = (Style)FindResource("FslTextBox")
                 };
-                
-                textBox.SetResourceReference(Control.ForegroundProperty, "MaterialDesignBody");
 
                 HintAssist.SetHint(textBox, SpecLocalization.GetDisplayLabel(field));
-                textBox.Style = (Style)FindResource("MaterialDesignFloatingHintTextBox");
 
-                if (isComplexType && !_basicFields.Contains(field))
+                if (isComplexType && !DeviceSpecFields.BasicFields.Contains(field))
                 {
                     AdvancedFieldsPanel.Children.Add(textBox);
                 }
@@ -1061,8 +970,4 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ViewToggle_Click(object sender, RoutedEventArgs e)
-    {
-        // Placeholder for view toggle logic if needed in code-behind
-    }
 }

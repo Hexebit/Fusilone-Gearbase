@@ -10,19 +10,19 @@
     
     <UserControl.Resources>
         <Style x:Key="KanbanColumnCard" TargetType="Border">
-            <Setter Property="Background" Value="{DynamicResource OverlayBrush}"/>
-            <Setter Property="CornerRadius" Value="20"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}"/>
+            <Setter Property="Background" Value="{DynamicResource FslSurface}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="KanbanItemCard" TargetType="materialDesign:Card">
-            <Setter Property="Background" Value="{DynamicResource ItemBackgroundBrush}"/>
-            <Setter Property="UniformCornerRadius" Value="15"/>
+            <Setter Property="Background" Value="{DynamicResource FslSurface2}"/>
+            <Setter Property="UniformCornerRadius" Value="8"/>
             <Setter Property="Padding" Value="15"/>
             <Setter Property="Margin" Value="10,10,10,0"/>
             <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp0"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
     </UserControl.Resources>
@@ -42,7 +42,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Margin="15,15,15,10">
-                    <TextBlock Text="{DynamicResource Kanban_Pending}" Foreground="{DynamicResource MaterialDesignBody}" FontWeight="Black" Opacity="0.5" FontSize="11"/>
+                    <TextBlock Text="{DynamicResource Kanban_Pending}" Foreground="{DynamicResource FslTextSecondary}" FontWeight="Black" FontSize="11"/>
                     <Border Height="2" Background="{DynamicResource StatusColor_Pending}" Width="40" HorizontalAlignment="Left" Margin="0,5,0,0"/>
                 </StackPanel>
                 
@@ -58,8 +58,8 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel>
                                             <TextBlock Text="{Binding Id}" FontWeight="Bold" Foreground="{DynamicResource StatusColor_Pending}" FontSize="13"/>
-                                            <TextBlock Text="{Binding FullName}" FontSize="12" Foreground="White" Opacity="0.9" Margin="0,5,0,0"/>
-                                            <TextBlock Text="{Binding OwnerName}" FontSize="11" Foreground="White" Opacity="0.4" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding FullName}" FontSize="12" Foreground="{DynamicResource FslTextPrimary}" Margin="0,5,0,0"/>
+                                            <TextBlock Text="{Binding OwnerName}" FontSize="11" Foreground="{DynamicResource FslTextSecondary}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <Border Grid.Column="1" Width="36" Height="36" CornerRadius="10" ClipToBounds="True" VerticalAlignment="Top">
                                             <Image Source="{Binding ImageUrl}" Stretch="UniformToFill"/>
@@ -81,7 +81,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Margin="15,15,15,10">
-                    <TextBlock Text="{DynamicResource Kanban_InProgress}" Foreground="{DynamicResource MaterialDesignBody}" FontWeight="Black" Opacity="0.5" FontSize="11"/>
+                    <TextBlock Text="{DynamicResource Kanban_InProgress}" Foreground="{DynamicResource FslTextSecondary}" FontWeight="Black" FontSize="11"/>
                     <Border Height="2" Background="{DynamicResource StatusColor_InProgress}" Width="40" HorizontalAlignment="Left" Margin="0,5,0,0"/>
                 </StackPanel>
                 
@@ -97,8 +97,8 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel>
                                             <TextBlock Text="{Binding Id}" FontWeight="Bold" Foreground="{DynamicResource StatusColor_InProgress}" FontSize="13"/>
-                                            <TextBlock Text="{Binding FullName}" FontSize="12" Foreground="White" Opacity="0.9" Margin="0,5,0,0"/>
-                                            <TextBlock Text="{Binding OwnerName}" FontSize="11" Foreground="White" Opacity="0.4" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding FullName}" FontSize="12" Foreground="{DynamicResource FslTextPrimary}" Margin="0,5,0,0"/>
+                                            <TextBlock Text="{Binding OwnerName}" FontSize="11" Foreground="{DynamicResource FslTextSecondary}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <Border Grid.Column="1" Width="36" Height="36" CornerRadius="10" ClipToBounds="True" VerticalAlignment="Top">
                                             <Image Source="{Binding ImageUrl}" Stretch="UniformToFill"/>
@@ -120,7 +120,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Margin="15,15,15,10">
-                    <TextBlock Text="{DynamicResource Kanban_Ready}" Foreground="{DynamicResource MaterialDesignBody}" FontWeight="Black" Opacity="0.5" FontSize="11"/>
+                    <TextBlock Text="{DynamicResource Kanban_Ready}" Foreground="{DynamicResource FslTextSecondary}" FontWeight="Black" FontSize="11"/>
                     <Border Height="2" Background="{DynamicResource StatusColor_Ready}" Width="40" HorizontalAlignment="Left" Margin="0,5,0,0"/>
                 </StackPanel>
                 
@@ -136,8 +136,8 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel>
                                             <TextBlock Text="{Binding Id}" FontWeight="Bold" Foreground="{DynamicResource StatusColor_Ready}" FontSize="13"/>
-                                            <TextBlock Text="{Binding FullName}" FontSize="12" Foreground="White" Opacity="0.9" Margin="0,5,0,0"/>
-                                            <TextBlock Text="{Binding OwnerName}" FontSize="11" Foreground="White" Opacity="0.4" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding FullName}" FontSize="12" Foreground="{DynamicResource FslTextPrimary}" Margin="0,5,0,0"/>
+                                            <TextBlock Text="{Binding OwnerName}" FontSize="11" Foreground="{DynamicResource FslTextSecondary}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                         <Border Grid.Column="1" Width="36" Height="36" CornerRadius="10" ClipToBounds="True" VerticalAlignment="Top">
                                             <Image Source="{Binding ImageUrl}" Stretch="UniformToFill"/>

@@ -6,20 +6,51 @@
         xmlns:local="clr-namespace:Fusilone"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:converters="clr-namespace:Fusilone.Converters"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="Cihaz Detayları" Height="900" Width="1200"
+        Title="Cihaz Detayları" Height="900" Width="1200" MinHeight="500" MinWidth="800"
         Icon="pack://application:,,,/assets/logo.png"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStyle="SingleBorderWindow"
+        TextElement.Foreground="{DynamicResource FslTextPrimary}"
+        Background="{DynamicResource FslBgBase}"
         FontFamily="{materialDesign:MaterialDesignFont}"
         WindowStartupLocation="CenterOwner">
-    
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="36" ResizeBorderThickness="5" GlassFrameThickness="1" UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisConverter"/>
     </Window.Resources>
-    
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Custom Title Bar -->
+        <Grid Grid.Row="0" Background="{DynamicResource FslBgBase}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                <Control Style="{StaticResource FslLogoMark}" Width="16" Height="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource Detail_WindowTitle}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource FslTextPrimary}" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button Click="TitleMin_Click" Width="36" Height="36" Padding="0" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Minimize">
+                    <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16" Foreground="{DynamicResource FslTextSecondary}"/>
+                </Button>
+                <Button Click="TitleMax_Click" Width="36" Height="36" Padding="0" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Maximize">
+                    <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16" Foreground="{DynamicResource FslTextSecondary}"/>
+                </Button>
+                <Button Click="TitleClose_Click" Width="36" Height="36" Padding="0" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Close">
+                    <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="{DynamicResource FslDanger}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -27,7 +58,7 @@
             </Grid.RowDefinitions>
 
         <!-- ÜST BAŞLIK ALANI -->
-        <materialDesign:Card Margin="15" Padding="20" UniformCornerRadius="10" Background="{DynamicResource MaterialDesignPaper}">
+        <materialDesign:Card Margin="15" Padding="20" UniformCornerRadius="8" Background="{DynamicResource FslSurface}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -35,15 +66,15 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <Border Width="80" Height="80" CornerRadius="8" Background="{DynamicResource MaterialDesignCardBackground}" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1" Margin="0,0,20,0">
+                <Border Width="80" Height="80" CornerRadius="8" Background="{DynamicResource FslSurface2}" BorderBrush="{DynamicResource FslBorder}" BorderThickness="1" Margin="0,0,20,0">
                     <Grid>
-                        <materialDesign:PackIcon Kind="DesktopClassic" Width="40" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}" Opacity="0.3"/>
+                        <materialDesign:PackIcon Kind="DesktopClassic" Width="40" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource FslAccent}" Opacity="0.3"/>
                         <Image x:Name="DeviceImage" Stretch="UniformToFill"/>
                     </Grid>
                 </Border>
                 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock x:Name="IdHeader" Text="FSL-XX-000" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                    <TextBlock x:Name="IdHeader" Text="FSL-XX-000" FontSize="28" FontWeight="Bold" FontFamily="{StaticResource FslFontMono}" Foreground="{DynamicResource FslAccent}"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBox x:Name="BrandBox" Text="Marka" FontSize="18" Opacity="0.8" IsReadOnly="True" BorderThickness="0" Margin="0,0,5,0"/>
                         <TextBox x:Name="ModelBox" Text="Model" FontSize="18" Opacity="0.8" IsReadOnly="True" BorderThickness="0"/>
@@ -57,13 +88,13 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button x:Name="EditButton" Click="EditMode_Click" Style="{StaticResource MaterialDesignOutlinedButton}" ToolTip="Düzenle" Margin="0,0,10,0">
+                    <Button x:Name="EditButton" Click="EditMode_Click" Style="{StaticResource FslSecondaryButton}" ToolTip="Düzenle" Margin="0,0,10,0">
                         <materialDesign:PackIcon Kind="Pencil"/>
                     </Button>
-                    <Button x:Name="SaveEditButton" Click="SaveChanges_Click" Style="{StaticResource MaterialDesignRaisedButton}" ToolTip="Kaydet" Visibility="Collapsed" Margin="0,0,10,0">
+                    <Button x:Name="SaveEditButton" Click="SaveChanges_Click" Style="{StaticResource FslPrimaryButton}" ToolTip="Kaydet" Visibility="Collapsed" Margin="0,0,10,0">
                         <materialDesign:PackIcon Kind="ContentSave"/>
                     </Button>
-                    <Button Click="CreateLabel_Click" Style="{StaticResource MaterialDesignOutlinedButton}" ToolTip="Etiket Oluştur">
+                    <Button Click="CreateLabel_Click" Style="{StaticResource FslSecondaryButton}" ToolTip="Etiket Oluştur">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Qrcode" Margin="0,0,8,0"/>
                             <TextBlock Text="{DynamicResource Detail_Label}"/>
@@ -133,7 +164,7 @@
                                 <StackPanel MinWidth="150" Margin="0,0,20,15">
                                     <TextBlock Text="{DynamicResource Detail_Status}" FontSize="10" FontWeight="Bold" Opacity="0.5"/>
                                     <Grid>
-                                        <materialDesign:Chip x:Name="StatusChip" Content="{DynamicResource Status_Active}" Background="{DynamicResource PrimaryHueLightBrush}" Margin="-5,0,0,0"
+                                        <materialDesign:Chip x:Name="StatusChip" Content="{DynamicResource Status_Active}" Background="{DynamicResource FslSurface2}" Foreground="{DynamicResource FslTextPrimary}" Margin="-5,0,0,0"
                                                              Visibility="{Binding IsReadOnlyMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                         <ComboBox x:Name="StatusComboBox" Style="{StaticResource MaterialDesignComboBox}" 
                                                   Visibility="{Binding IsReadOnlyMode, Converter={StaticResource InverseBoolToVisConverter}}"
@@ -158,7 +189,7 @@
                         </materialDesign:Card>
 
                         <!-- Finansal Özet -->
-                        <materialDesign:Card Grid.Row="1" Padding="20" Margin="0,0,0,20" Background="{DynamicResource MaterialDesignCardBackground}">
+                        <materialDesign:Card Grid.Row="1" Padding="20" Margin="0,0,0,20" Background="{DynamicResource FslSurface}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -176,30 +207,30 @@
                                     </Grid.ColumnDefinitions>
                                     
                                     <StackPanel HorizontalAlignment="Center">
-                                        <materialDesign:PackIcon Kind="ShoppingOutline" HorizontalAlignment="Center" Opacity="0.5" Foreground="{DynamicResource MaterialDesignBody}"/>
-                                        <TextBlock Text="{DynamicResource Detail_PurchasePrice}" HorizontalAlignment="Center" FontSize="10" Opacity="0.5" Margin="0,5,0,0"/>
-                                        <TextBlock x:Name="PurchasePriceText" Text="0 ₺" HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold"/>
+                                        <materialDesign:PackIcon Kind="ShoppingOutline" HorizontalAlignment="Center" Foreground="{DynamicResource FslTextSecondary}"/>
+                                        <TextBlock Text="{DynamicResource Detail_PurchasePrice}" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource FslTextSecondary}" Margin="0,5,0,0"/>
+                                        <TextBlock x:Name="PurchasePriceText" Text="0 ₺" HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold" FontFamily="{StaticResource FslFontMono}" Foreground="{DynamicResource FslTextPrimary}"/>
                                     </StackPanel>
 
-                                    <Border Grid.Column="1" Width="1" Background="{DynamicResource MaterialDesignDivider}" Opacity="0.1" Margin="0,5"/>
+                                    <Border Grid.Column="1" Width="1" Background="{DynamicResource FslBorder}" Margin="0,5"/>
 
                                     <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                        <materialDesign:PackIcon Kind="WrenchClock" HorizontalAlignment="Center" Opacity="0.5" Foreground="{DynamicResource AccentColor}"/>
-                                        <TextBlock Text="{DynamicResource Detail_MaintCost}" HorizontalAlignment="Center" FontSize="10" Opacity="0.5" Margin="0,5,0,0"/>
-                                        <TextBlock x:Name="TotalMaintCostText" Text="0 ₺" HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource AccentColor}"/>
+                                        <materialDesign:PackIcon Kind="WrenchClock" HorizontalAlignment="Center" Foreground="{DynamicResource FslTextSecondary}"/>
+                                        <TextBlock Text="{DynamicResource Detail_MaintCost}" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource FslTextSecondary}" Margin="0,5,0,0"/>
+                                        <TextBlock x:Name="TotalMaintCostText" Text="0 ₺" HorizontalAlignment="Center" FontSize="20" FontWeight="SemiBold" FontFamily="{StaticResource FslFontMono}" Foreground="{DynamicResource FslTextPrimary}"/>
                                     </StackPanel>
 
-                                    <Border Grid.Column="3" Width="1" Background="White" Opacity="0.1" Margin="0,5"/>
+                                    <Border Grid.Column="3" Width="1" Background="{DynamicResource FslBorder}" Margin="0,5"/>
 
                                     <StackPanel Grid.Column="4" HorizontalAlignment="Center">
-                                        <materialDesign:PackIcon Kind="ChartPie" HorizontalAlignment="Center" Opacity="0.5" Foreground="{DynamicResource ErrorColor}"/>
-                                        <TextBlock Text="{DynamicResource Detail_TotalCost}" HorizontalAlignment="Center" FontSize="10" Opacity="0.5" Margin="0,5,0,0"/>
-                                        <TextBlock x:Name="TotalCostText" Text="0 ₺" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                        <materialDesign:PackIcon Kind="ChartPie" HorizontalAlignment="Center" Foreground="{DynamicResource FslTextSecondary}"/>
+                                        <TextBlock Text="{DynamicResource Detail_TotalCost}" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource FslTextSecondary}" Margin="0,5,0,0"/>
+                                        <TextBlock x:Name="TotalCostText" Text="0 ₺" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" FontFamily="{StaticResource FslFontMono}" Foreground="{DynamicResource FslAccent}"/>
                                     </StackPanel>
                                 </Grid>
                                 
                                 <!-- Tarihler -->
-                                <Border Grid.Row="1" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0" Margin="0,15,0,0" Padding="0,15,0,15">
+                                <Border Grid.Row="1" BorderBrush="{DynamicResource FslBorder}" BorderThickness="0,1,0,0" Margin="0,15,0,0" Padding="0,15,0,15">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -217,7 +248,7 @@
                                 </Border>
                                 
                                 <!-- Ekstralar / Notlar -->
-                                <Border Grid.Row="2" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,1,0,0" Margin="0,0,0,0" Padding="0,15,0,0">
+                                <Border Grid.Row="2" BorderBrush="{DynamicResource FslBorder}" BorderThickness="0,1,0,0" Margin="0,0,0,0" Padding="0,15,0,0">
                                     <StackPanel>
                                         <TextBlock Text="{DynamicResource Detail_Notes}" FontSize="11" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,8"/>
                                         <TextBox x:Name="NotesBox" 
@@ -279,7 +310,7 @@
                     <DataGrid x:Name="HistoryDataGrid" 
                               AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" 
                               materialDesign:DataGridAssist.CellPadding="10"
-                              Background="{DynamicResource MaterialDesignCardBackground}">
+                              Background="{DynamicResource FslSurface}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{DynamicResource History_Col_Date}" Binding="{Binding Date, StringFormat=\{0:dd.MM.yyyy\}}" FontWeight="Bold"/>
                             <DataGridTextColumn Header="{DynamicResource History_Col_Action}" Binding="{Binding Description}" Width="*"/>
@@ -299,10 +330,10 @@
                                     <ColumnDefinition Width="120"/>
                                 </Grid.ColumnDefinitions>
                                 
-                                <DatePicker x:Name="NewRecordDate" materialDesign:HintAssist.Hint="{DynamicResource Detail_RecordDate}" Margin="0,0,15,0"/>
-                                <TextBox x:Name="NewRecordDescription" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource Detail_RecordDesc}" Margin="0,0,15,0"/>
-                                <TextBox x:Name="NewRecordCost" Grid.Column="2" Text="0" materialDesign:HintAssist.Hint="{DynamicResource Detail_RecordCost}" Margin="0,0,15,0"/>
-                                <Button Grid.Column="3" Click="AddRecord_Click" Style="{StaticResource MaterialDesignRaisedButton}">
+                                <DatePicker x:Name="NewRecordDate" materialDesign:HintAssist.Hint="{DynamicResource Detail_RecordDate}" Style="{StaticResource FslDatePicker}" Margin="0,0,15,0"/>
+                                <TextBox x:Name="NewRecordDescription" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource Detail_RecordDesc}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                <TextBox x:Name="NewRecordCost" Grid.Column="2" Text="0" materialDesign:HintAssist.Hint="{DynamicResource Detail_RecordCost}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                <Button Grid.Column="3" Click="AddRecord_Click" Style="{StaticResource FslPrimaryButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Plus" Margin="0,0,5,0"/>
                                         <TextBlock Text="{DynamicResource Detail_RecordAdd}"/>
@@ -352,16 +383,16 @@
                                         <ColumnDefinition Width="120"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBox x:Name="PartNameTextBox" materialDesign:HintAssist.Hint="{DynamicResource Parts_Name}" Margin="0,0,15,0"/>
-                                    <TextBox x:Name="PartNumberTextBox" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Number}" Margin="0,0,15,0"/>
-                                    <TextBox x:Name="PartQtyTextBox" Grid.Column="2" Text="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Qty}" Margin="0,0,15,0"/>
-                                    <ComboBox x:Name="PartStatusCombo" Grid.Column="3" materialDesign:HintAssist.Hint="{DynamicResource Parts_Status}" Margin="0,0,15,0">
+                                    <TextBox x:Name="PartNameTextBox" materialDesign:HintAssist.Hint="{DynamicResource Parts_Name}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <TextBox x:Name="PartNumberTextBox" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Number}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <TextBox x:Name="PartQtyTextBox" Grid.Column="2" Text="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Qty}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <ComboBox x:Name="PartStatusCombo" Grid.Column="3" materialDesign:HintAssist.Hint="{DynamicResource Parts_Status}" Style="{StaticResource FslComboBox}" Margin="0,0,15,0">
                                         <ComboBoxItem Content="{DynamicResource Parts_Status_New}" Tag="New"/>
                                         <ComboBoxItem Content="{DynamicResource Parts_Status_Used}" Tag="Used"/>
                                         <ComboBoxItem Content="{DynamicResource Parts_Status_Faulty}" Tag="Faulty"/>
                                     </ComboBox>
-                                    <TextBox x:Name="PartNotesTextBox" Grid.Column="4" materialDesign:HintAssist.Hint="{DynamicResource Parts_Notes}" Margin="0,0,15,0"/>
-                                    <Button Grid.Column="5" Click="AddPart_Click" Style="{StaticResource MaterialDesignRaisedButton}">
+                                    <TextBox x:Name="PartNotesTextBox" Grid.Column="4" materialDesign:HintAssist.Hint="{DynamicResource Parts_Notes}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <Button Grid.Column="5" Click="AddPart_Click" Style="{StaticResource FslPrimaryButton}">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="Plus" Margin="0,0,5,0"/>
                                             <TextBlock Text="{DynamicResource Parts_AddButton}"/>
@@ -399,16 +430,16 @@
                                         <ColumnDefinition Width="120"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <ComboBox x:Name="PartMovementPartCombo" DisplayMemberPath="DisplayName" materialDesign:HintAssist.Hint="{DynamicResource Parts_Name}" Margin="0,0,15,0"/>
-                                    <ComboBox x:Name="PartMovementActionCombo" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Action}" Margin="0,0,15,0">
+                                    <ComboBox x:Name="PartMovementPartCombo" DisplayMemberPath="DisplayName" materialDesign:HintAssist.Hint="{DynamicResource Parts_Name}" Style="{StaticResource FslComboBox}" Margin="0,0,15,0"/>
+                                    <ComboBox x:Name="PartMovementActionCombo" Grid.Column="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Action}" Style="{StaticResource FslComboBox}" Margin="0,0,15,0">
                                         <ComboBoxItem Content="{DynamicResource Parts_Action_Added}" Tag="Added"/>
                                         <ComboBoxItem Content="{DynamicResource Parts_Action_Removed}" Tag="Removed"/>
                                         <ComboBoxItem Content="{DynamicResource Parts_Action_Replaced}" Tag="Replaced"/>
                                     </ComboBox>
-                                    <TextBox x:Name="PartMovementQtyTextBox" Grid.Column="2" Text="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Qty}" Margin="0,0,15,0"/>
-                                    <TextBox x:Name="PartMovementCostTextBox" Grid.Column="3" Text="0" materialDesign:HintAssist.Hint="{DynamicResource Parts_Cost}" Margin="0,0,15,0"/>
-                                    <TextBox x:Name="PartMovementNotesTextBox" Grid.Column="4" materialDesign:HintAssist.Hint="{DynamicResource Parts_Notes}" Margin="0,0,15,0"/>
-                                    <Button Grid.Column="5" Click="AddPartMovement_Click" Style="{StaticResource MaterialDesignRaisedButton}">
+                                    <TextBox x:Name="PartMovementQtyTextBox" Grid.Column="2" Text="1" materialDesign:HintAssist.Hint="{DynamicResource Parts_Qty}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <TextBox x:Name="PartMovementCostTextBox" Grid.Column="3" Text="0" materialDesign:HintAssist.Hint="{DynamicResource Parts_Cost}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <TextBox x:Name="PartMovementNotesTextBox" Grid.Column="4" materialDesign:HintAssist.Hint="{DynamicResource Parts_Notes}" Style="{StaticResource FslTextBox}" Margin="0,0,15,0"/>
+                                    <Button Grid.Column="5" Click="AddPartMovement_Click" Style="{StaticResource FslPrimaryButton}">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="Plus" Margin="0,0,5,0"/>
                                             <TextBlock Text="{DynamicResource Parts_AddMovementButton}"/>
@@ -436,7 +467,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Button Click="AddPhoto_Click" HorizontalAlignment="Left" Margin="0,0,0,20" Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <Button Click="AddPhoto_Click" HorizontalAlignment="Left" Margin="0,0,0,20" Style="{StaticResource FslSecondaryButton}">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="CameraPlus" Margin="0,0,8,0"/>
                             <TextBlock Text="{DynamicResource Detail_Upload}"/>
@@ -472,4 +503,5 @@
         </TabControl>
         </Grid>
     </ScrollViewer>
+    </Grid>
 </Window>

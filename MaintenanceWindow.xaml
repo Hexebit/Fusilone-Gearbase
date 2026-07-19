@@ -8,8 +8,8 @@
         mc:Ignorable="d"
         Title="Bakım Takvimi" Height="650" Width="1000"
         Icon="pack://application:,,,/assets/logo.png"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource FslTextPrimary}"
+        Background="{DynamicResource FslBgBase}"
         FontFamily="{materialDesign:MaterialDesignFont}"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="20">
@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="0,0,0,25">
-            <materialDesign:PackIcon Kind="CalendarClock" Width="32" Height="32" VerticalAlignment="Center" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+            <materialDesign:PackIcon Kind="CalendarClock" Width="32" Height="32" VerticalAlignment="Center" Foreground="{DynamicResource FslAccent}"/>
             <TextBlock Text="{DynamicResource Maintenance_Title}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" Margin="15,0,0,0"/>
         </StackPanel>
 
@@ -43,7 +43,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding NextMaintenanceDate, StringFormat=\{0:dd.MM.yyyy\}}" 
-                                           Foreground="{DynamicResource MaterialDesignBody}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                           Foreground="{DynamicResource FslTextPrimary}" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
