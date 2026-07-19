@@ -8,44 +8,123 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                <!-- Material Design v5.x with Teal as primary -->
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Teal" SecondaryColor="Amber" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <!-- Fusilone tokens overlay -->
+                <ResourceDictionary Source="pack://application:,,,/Fusilone;component/Themes/Fusilone.Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Dark Mode Color Overrides for Better Contrast -->
-            <SolidColorBrush x:Key="MaterialDesignPaper" Color="#121212"/>
-            <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="#1E1E1E"/>
-            <SolidColorBrush x:Key="MaterialDesignBody" Color="#E0E0E0"/>
-            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#CE93D8"/>
-            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#E1BEE7"/>
-            <SolidColorBrush x:Key="SecondaryHueMidBrush" Color="#CDDC39"/>
-            <SolidColorBrush x:Key="MaterialDesignDivider" Color="#404040"/>
+            <!-- Fusilone logo mark: resmi FGB logosu (assets/logo.png), tüm kullanım noktaları bu stili paylaşır -->
+            <Style x:Key="FslLogoMark" TargetType="Control">
+                <Setter Property="IsTabStop" Value="False"/>
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Control">
+                            <Image Source="pack://application:,,,/assets/logo.png"
+                                   Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-            <!-- Status and Type Colors -->
-            <SolidColorBrush x:Key="SuccessColor" Color="#81C784"/>
-            <SolidColorBrush x:Key="ErrorColor" Color="#EF5350"/>
-            <SolidColorBrush x:Key="AccentColor" Color="#FFD54F"/>
-            <SolidColorBrush x:Key="TypeColor_PC" Color="#64B5F6"/>
-            <SolidColorBrush x:Key="TypeColor_LP" Color="#FFB74D"/>
-            <SolidColorBrush x:Key="TypeColor_AO" Color="#BA68C8"/>
-            <SolidColorBrush x:Key="TypeColor_PH" Color="#29B6F6"/>
-            <SolidColorBrush x:Key="TypeColor_ET" Color="#EF5350"/>
-            <SolidColorBrush x:Key="TypeColor_MN" Color="#9CCC65"/>
-            <SolidColorBrush x:Key="StatusColor_Pending" Color="#42A5F5"/>
-            <SolidColorBrush x:Key="StatusColor_InProgress" Color="#FFA726"/>
-            <SolidColorBrush x:Key="StatusColor_Ready" Color="#66BB6A"/>
-            <SolidColorBrush x:Key="OverlayBrush" Color="#33222222"/>
-            <SolidColorBrush x:Key="ItemBackgroundBrush" Color="#2A2A2A"/>
-            <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+            <!-- Fusilone font tokens (Adım: Tipografi'de embed edilecek; şimdilik sistem fallback) -->
+            <FontFamily x:Key="FslFontMono">Consolas</FontFamily>
+
+            <!-- Fusilone tek input stili: Outlined varyant, FslSurface2 zemin, FslAccent focus, 8px radius -->
+            <Style x:Key="FslTextBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
+                <Setter Property="Background" Value="{DynamicResource FslSurface2}"/>
+                <Setter Property="Foreground" Value="{DynamicResource FslTextPrimary}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
+                <Setter Property="materialDesign:HintAssist.Foreground" Value="{DynamicResource FslTextSecondary}"/>
+                <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="8"/>
+                <Setter Property="materialDesign:TextFieldAssist.OutlinedBorderActiveThickness" Value="1.5"/>
             </Style>
-            <Style TargetType="Label">
-                <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+
+            <Style x:Key="FslComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}">
+                <Setter Property="Background" Value="{DynamicResource FslSurface2}"/>
+                <Setter Property="Foreground" Value="{DynamicResource FslTextPrimary}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
+                <Setter Property="materialDesign:HintAssist.Foreground" Value="{DynamicResource FslTextSecondary}"/>
+                <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="8"/>
+                <Setter Property="materialDesign:TextFieldAssist.OutlinedBorderActiveThickness" Value="1.5"/>
             </Style>
+
+            <Style x:Key="FslDatePicker" TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignOutlinedDatePicker}">
+                <Setter Property="Background" Value="{DynamicResource FslSurface2}"/>
+                <Setter Property="Foreground" Value="{DynamicResource FslTextPrimary}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
+                <Setter Property="materialDesign:HintAssist.Foreground" Value="{DynamicResource FslTextSecondary}"/>
+                <Setter Property="materialDesign:TextFieldAssist.TextFieldCornerRadius" Value="8"/>
+                <Setter Property="materialDesign:TextFieldAssist.OutlinedBorderActiveThickness" Value="1.5"/>
+            </Style>
+
+            <!-- Primary buton: FslAccent zemin, FslOnAccent yazı, 8px radius, hover FslAccentHover -->
+            <Style x:Key="FslPrimaryButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                <Setter Property="Background" Value="{DynamicResource FslAccent}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource FslAccent}"/>
+                <Setter Property="Foreground" Value="{DynamicResource FslOnAccent}"/>
+                <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource FslAccentHover}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource FslAccentHover}"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource FslAccentPressed}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource FslAccentPressed}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Secondary buton: transparan zemin, 1px FslBorder, FslTextPrimary yazı, hover FslSurface2 -->
+            <Style x:Key="FslSecondaryButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
+                <Setter Property="Foreground" Value="{DynamicResource FslTextPrimary}"/>
+                <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource FslSurface2}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Destructive buton: FslDanger zemin -->
+            <Style x:Key="FslDangerButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                <Setter Property="Background" Value="{DynamicResource FslDanger}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource FslDanger}"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
+            </Style>
+
+            <!-- Tablo başlıkları: 11.5, ikincil renk -->
+            <Style x:Key="FslColumnHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                <Setter Property="Foreground" Value="{DynamicResource FslTextSecondary}"/>
+                <Setter Property="FontSize" Value="11.5"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+
+            <!-- Tablo satırı: hover FslSurface2, 1px alt ayraç -->
+            <Style x:Key="FslDataGridRow" TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}"/>
+                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource FslSurface2}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Card style: 8px radius, 1px border, no shadow -->
             <Style TargetType="materialDesign:Card">
-                <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2" />
-                <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}" />
+                <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp0" />
+                <Setter Property="UniformCornerRadius" Value="8" />
+                <Setter Property="BorderBrush" Value="{DynamicResource FslBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Background" Value="{DynamicResource FslSurface}" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

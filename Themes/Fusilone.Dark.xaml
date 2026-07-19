@@ -1,0 +1,64 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <!-- Fusilone Dark Theme Tokens -->
+
+    <!-- Base Colors -->
+    <SolidColorBrush x:Key="FslBgBase" Color="#0D0F14" />
+    <SolidColorBrush x:Key="FslSurface" Color="#161B24" />
+    <SolidColorBrush x:Key="FslSurface2" Color="#1E2532" />
+    <SolidColorBrush x:Key="FslBorder" Color="#262D3A" />
+
+    <!-- Text Colors -->
+    <SolidColorBrush x:Key="FslTextPrimary" Color="#EDE6DA" />
+    <SolidColorBrush x:Key="FslTextSecondary" Color="#ADA795" />
+    <SolidColorBrush x:Key="FslTextDisabled" Color="#7A7F8B" />
+
+    <!-- Accent & Status -->
+    <SolidColorBrush x:Key="FslAccent" Color="#17A398" />
+    <SolidColorBrush x:Key="FslAccentFaint" Color="#1A17A398" />
+    <SolidColorBrush x:Key="FslAccentHover" Color="#1FBFB2" />
+    <SolidColorBrush x:Key="FslAccentPressed" Color="#12857C" />
+    <SolidColorBrush x:Key="FslOnAccent" Color="#052E2B" />
+    <SolidColorBrush x:Key="FslSuccess" Color="#2ECC71" />
+    <SolidColorBrush x:Key="FslSuccessFaint" Color="#242ECC71" />
+    <SolidColorBrush x:Key="FslDanger" Color="#D63A2E" />
+    <SolidColorBrush x:Key="FslDangerFaint" Color="#1FD63A2E" />
+    <SolidColorBrush x:Key="FslDisabledFaint" Color="#245C6270" />
+
+    <!-- Legacy bridge: eski key'leri kullanan görünümler (KanbanView, DeviceDetailWindow) için Fusilone paletine eşleme -->
+    <SolidColorBrush x:Key="SuccessColor" Color="#2ECC71" />
+    <SolidColorBrush x:Key="ErrorColor" Color="#D63A2E" />
+    <SolidColorBrush x:Key="AccentColor" Color="#17A398" />
+    <SolidColorBrush x:Key="StatusColor_Pending" Color="#6BD9CF" />
+    <SolidColorBrush x:Key="StatusColor_InProgress" Color="#1FBFB2" />
+    <SolidColorBrush x:Key="StatusColor_Ready" Color="#2ECC71" />
+    <SolidColorBrush x:Key="OverlayBrush" Color="#26060810" />
+    <SolidColorBrush x:Key="ItemBackgroundBrush" Color="#1E2532" />
+
+    <!-- Material Design v5.x Bridge: Override MDIX brushes with Fusilone tokens -->
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Primary" Color="#17A398" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Primary.Light" Color="#1FBFB2" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Primary.Dark" Color="#12857C" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Secondary" Color="#8A8578" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Secondary.Light" Color="#A19B8D" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Secondary.Dark" Color="#5C6270" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Tertiary" Color="#17A398" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Tertiary.Light" Color="#1FBFB2" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Tertiary.Dark" Color="#12857C" />
+
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Background" Color="#0D0F14" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Surface" Color="#161B24" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.SurfaceVariant" Color="#1E2532" />
+
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Foreground" Color="#EDE6DA" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.OnSurface" Color="#EDE6DA" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.OnSurfaceVariant" Color="#8A8578" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Outline" Color="#262D3A" />
+
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Error" Color="#D63A2E" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.ErrorContainer" Color="#5C1414" />
+    <SolidColorBrush x:Key="MaterialDesign.Brush.OnError" Color="#FFFFFF" />
+
+</ResourceDictionary>

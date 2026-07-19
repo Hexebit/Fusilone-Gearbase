@@ -15,16 +15,22 @@ public partial class AboutWindow : Window
         this.Close();
     }
 
-    private void OpenGitHub_Click(object sender, RoutedEventArgs e)
+    private void OpenGitHub_Click(object sender, RoutedEventArgs e) =>
+        OpenUrl("https://github.com/Hexebit");
+
+    private void OpenWebsite_Click(object sender, RoutedEventArgs e) =>
+        OpenUrl("https://www.fusilone.com");
+
+    private static void OpenUrl(string url)
     {
         try
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://github.com/Hexebit",
+                FileName = url,
                 UseShellExecute = true
             });
         }
-        catch { /* Silently handle if browser fails to open */ }
+        catch { /* Tarayıcı açılamazsa sessizce geç */ }
     }
 }

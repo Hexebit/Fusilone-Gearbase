@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using Fusilone.Data;
 using Fusilone.Models;
 using Fusilone.Helpers;
+using Serilog;
 
 namespace Fusilone;
 
@@ -45,58 +46,6 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
     private List<DevicePart> _deviceParts = new List<DevicePart>();
     private Dictionary<string, string> _originalSpecs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-    private static readonly Dictionary<string, List<string>> SpecFieldsByType = new(StringComparer.OrdinalIgnoreCase)
-    {
-        { "PC", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "Harici Ekran Kartı Markası", "Harici Ekran Kartı Modeli", "Harici Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)", "RAM Modeli (Slot 3)", "RAM Modeli (Slot 4)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "PSU Markası", "PSU Modeli", "PSU Gücü", "Soğutma Tipi",
-            "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu", "Wifi Desteği", "Bluetooth Desteği"
-        }},
-        { "AO", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "Harici Ekran Kartı Markası", "Harici Ekran Kartı Modeli", "Harici Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)", "RAM Modeli (Slot 3)", "RAM Modeli (Slot 4)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "Güç Adaptörü Markası", "Güç Adaptörü Modeli", "Adaptör Gücü",
-            "Soğutma Tipi", "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu",
-            "Wifi Desteği", "Bluetooth Desteği", "Monitör Panel Tipi", "Monitör Ekran Çözünürlüğü", "Kamera desteği"
-        }},
-        { "LP", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)", "Hafıza (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "Harici Ekran Kartı Markası", "Harici Ekran Kartı Modeli", "Harici Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)", "RAM Modeli (Slot 3)", "RAM Modeli (Slot 4)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "Güç Adaptörü Markası", "Güç Adaptörü Modeli", "Adaptör Gücü",
-            "Soğutma Tipi", "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu",
-            "Wifi Desteği", "Bluetooth Desteği", "Monitör Panel Tipi", "Monitör Ekran Çözünürlüğü", "Kamera desteği"
-        }},
-        { "ET", new List<string> {
-            "CPU Markası", "CPU Modeli", "Anakart Markası", "Anakart Modeli", "RAM Türü", "İşletim Sistemi", "RAM Boyutu (Toplam)",
-            "Dahili Ekran Kartı Markası", "Dahili Ekran Kartı Modeli", "Dahili Ekran Kartı Bellek Miktarı",
-            "RAM Markası", "RAM Modeli (Slot 1)", "RAM Modeli (Slot 2)",
-            "Ana Depolama Cihazı Markası", "Ana Depolama Cihazı Modeli", "Ana Depolama Cihazı Türü",
-            "İkincil Depolama Cihazı Markası", "İkincil Depolama Cihazı Modeli", "İkincil Depolama Cihazı Türü",
-            "Soğutma Tipi", "DVD-CD Sürücü Markası", "DVD-CD Sürücü Modeli", "BIOS versiyonu",
-            "Wifi Desteği", "Bluetooth Desteği", "Monitör Panel Tipi", "Monitör Ekran Çözünürlüğü", "Kamera desteği"
-        }},
-        { "MN", new List<string> { "Ekran Çözünürlüğü", "Ekran Boyutu", "Panel Tipi", "Desteklenen Görüntü Portları", "Adaptör Türü", "Hoparlör özelliğinin olup olmadığı", "Yenileme Hızı" } },
-        { "PH", new List<string> { "CPU Markası", "Ram Miktarı", "Depolama Miktarı", "İşletim Sistemi", "Batarya Kapasitesi", "IMEI", "Şarj Port Türü" } },
-        { "TB", new List<string> { "CPU Markası", "Ram Miktarı", "Depolama Miktarı", "İşletim Sistemi", "Batarya Kapasitesi", "IMEI", "Şarj Port Türü" } },
-        { "PR", new List<string> { "Yazıcı Türü (Toner ya da Kartuş)", "Renk Desteği", "Fonksiyonlar (Sadece yazıcı ya da Yazıcı ve Tarayıcı gibi)", "Sarf Malzemesi Modeli", "Bağlantı Türü" } },
-        { "RT", new List<string> { "Router Türü (Modem, Router ya da Bridge gibi)", "WanType", "Admin kullanıcı adı", "wifi Bandı" } },
-        { "PJ", new List<string> { "Çözünürlük", "Yenileme Hızı", "Desteklenen Görüntü Portları", "Adaptör Türü" } },
-        { "GC", new List<string> { "Konsol Nesli", "Depolama Miktarı", "Optik Sürücü Durumu", "Kontrolcü Sayısı", "Çevrimiçi Servis", "Wifi Desteği", "Bluetooth Desteği" } }
-    };
-    
     // UI Binding Property
     private bool _isReadOnlyMode = true;
     public bool IsReadOnlyMode
@@ -129,6 +78,13 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
         if (PartMovementActionCombo != null && PartMovementActionCombo.SelectedIndex < 0)
             PartMovementActionCombo.SelectedIndex = 0;
     }
+
+    private void TitleMin_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+    private void TitleMax_Click(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+    private void TitleClose_Click(object sender, RoutedEventArgs e) => Close();
 
     private void LoadDeviceDetails()
     {
@@ -181,7 +137,11 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
                 bitmap.EndInit();
                 DeviceImage.Source = bitmap;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // Görsel yüklenemezse pencere yine açılır; sadece log'a düşer
+                Log.Warning(ex, "Cihaz görseli yüklenemedi: {ImageUrl}", _device.ImageUrl);
+            }
         }
     }
 
@@ -237,12 +197,15 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
             }
             TechSpecsList.ItemsSource = TechSpecsCollection;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Teknik özellikler yüklenirken hata (cihaz: {DeviceId})", _device.Id);
+        }
     }
 
     private void EnsureCommonFieldsForType(string typeCode, Dictionary<string,string> specs)
     {
-        if (!string.IsNullOrEmpty(typeCode) && SpecFieldsByType.TryGetValue(typeCode, out var fields))
+        if (!string.IsNullOrEmpty(typeCode) && DeviceSpecFields.ByType.TryGetValue(typeCode, out var fields))
         {
             foreach (var f in fields)
             {
@@ -259,22 +222,25 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
         }
     }
 
-    private void EditMode_Click(object sender, RoutedEventArgs e)
+    private void EditMode_Click(object sender, RoutedEventArgs e) => SetEditMode(true);
+
+    // Düzenleme modunu tek yerden aç/kapat: inline-edit kutularının kenarlık ve
+    // salt-okunur durumları ile Düzenle/Kaydet butonlarının görünürlüğü.
+    private void SetEditMode(bool editing)
     {
-        // Toggle Edit Mode
-        IsReadOnlyMode = false; // Trigger UI update via Binding
-        
-        BrandBox.IsReadOnly = false;
-        ModelBox.IsReadOnly = false;
-        BrandBox.BorderThickness = new Thickness(0,0,0,1);
-        ModelBox.BorderThickness = new Thickness(0,0,0,1);
-        DeviceNameBox.BorderThickness = new Thickness(0,0,0,1);
-        OwnerNameBox.BorderThickness = new Thickness(0,0,0,1);
-        SerialNumberBox.BorderThickness = new Thickness(0,0,0,1);
-        PeriodBox.BorderThickness = new Thickness(0,0,0,1);
-        
-        EditButton.Visibility = Visibility.Collapsed;
-        SaveEditButton.Visibility = Visibility.Visible;
+        IsReadOnlyMode = !editing; // Binding üzerinden bağlı alanları günceller
+
+        BrandBox.IsReadOnly = !editing;
+        ModelBox.IsReadOnly = !editing;
+
+        var border = editing ? new Thickness(0, 0, 0, 1) : new Thickness(0);
+        foreach (var box in new[] { BrandBox, ModelBox, DeviceNameBox, OwnerNameBox, SerialNumberBox, PeriodBox })
+        {
+            box.BorderThickness = border;
+        }
+
+        EditButton.Visibility = editing ? Visibility.Collapsed : Visibility.Visible;
+        SaveEditButton.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void SaveChanges_Click(object sender, RoutedEventArgs e)
@@ -305,12 +271,7 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
         }
 
         // Collect updated specs
-        var newSpecs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var item in TechSpecsCollection)
-        {
-            if (!string.IsNullOrEmpty(item.Key))
-                newSpecs[item.Key] = item.Value;
-        }
+        var newSpecs = CollectSpecsFromUI();
         _device.TechSpecs = JsonSerializer.Serialize(newSpecs);
 
         var specChanges = GetSpecChanges(_originalSpecs, newSpecs);
@@ -333,22 +294,8 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
                 LoadMaintenanceHistory();
             }
             
-            // Revert to ReadOnly
-            IsReadOnlyMode = true;
-            BrandBox.IsReadOnly = true;
-            ModelBox.IsReadOnly = true;
-            
-            // UI Cleanup for new boxes
-            BrandBox.BorderThickness = new Thickness(0);
-            ModelBox.BorderThickness = new Thickness(0);
-            DeviceNameBox.BorderThickness = new Thickness(0);
-            OwnerNameBox.BorderThickness = new Thickness(0);
-            SerialNumberBox.BorderThickness = new Thickness(0);
-            PeriodBox.BorderThickness = new Thickness(0);
-            
-            EditButton.Visibility = Visibility.Visible;
-            SaveEditButton.Visibility = Visibility.Collapsed;
-            
+            SetEditMode(false);
+
             _originalSpecs = new Dictionary<string, string>(newSpecs, StringComparer.OrdinalIgnoreCase);
             MessageBox.Show("Tüm değişiklikler kaydedildi.");
         }
@@ -356,6 +303,18 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
         {
             MessageBox.Show($"Güncelleme hatası: {ex.Message}");
         }
+    }
+
+    // Spec listesindeki (UI) güncel değerleri sözlüğe toplar; Kaydet ve Etiket Oluştur ortak kullanır.
+    private Dictionary<string, string> CollectSpecsFromUI()
+    {
+        var specs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var item in TechSpecsCollection)
+        {
+            if (!string.IsNullOrEmpty(item.Key))
+                specs[item.Key] = item.Value;
+        }
+        return specs;
     }
 
     private static List<string> GetSpecChanges(Dictionary<string, string> before, Dictionary<string, string> after)
@@ -662,38 +621,18 @@ public partial class DeviceDetailWindow : Window, INotifyPropertyChanged
             {
                 _device.Brand = BrandBox.Text;
                 _device.Model = ModelBox.Text;
-                
-                var currentSpecs = new Dictionary<string, string>();
-                foreach (var item in TechSpecsCollection)
-                {
-                    if (!string.IsNullOrEmpty(item.Key))
-                        currentSpecs[item.Key] = item.Value;
-                }
-                _device.TechSpecs = JsonSerializer.Serialize(currentSpecs);
+                _device.TechSpecs = JsonSerializer.Serialize(CollectSpecsFromUI());
             }
 
-            string path = "";
-            
-            // Get last maintenance note
-            var records = _dbHelper.GetRecordsByDeviceId(_device.Id);
-            string note = "Henüz bakım yapılmadı";
-            if (records != null && records.Count > 0)
-            {
-                var lastRecord = records.OrderByDescending(r => r.Date).FirstOrDefault();
-                if (lastRecord != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(lastRecord.Notes))
-                    {
-                        note = lastRecord.Notes;
-                    }
-                    else if (!string.IsNullOrWhiteSpace(lastRecord.Description))
-                    {
-                        note = lastRecord.Description;
-                    }
-                }
-            }
+            // Etikete basılacak not: en son bakım kaydının notu ya da açıklaması
+            var lastRecord = _dbHelper.GetRecordsByDeviceId(_device.Id)
+                                      .OrderByDescending(r => r.Date)
+                                      .FirstOrDefault();
+            string note = !string.IsNullOrWhiteSpace(lastRecord?.Notes) ? lastRecord.Notes
+                        : !string.IsNullOrWhiteSpace(lastRecord?.Description) ? lastRecord.Description
+                        : "Henüz bakım yapılmadı";
 
-            path = LabelManager.GenerateLabel(_device, note);
+            string path = LabelManager.GenerateLabel(_device, note);
             
             // To prevent potential UI lock or stale file handle issues, 
             // the user is notified and the file is overwritten on disk.

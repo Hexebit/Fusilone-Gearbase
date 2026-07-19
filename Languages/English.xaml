@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=netstandard">
   <!-- Minimal English resources; expand as needed -->
-  <sys:String x:Key="AppTitle">Fusilone Device Management</sys:String>
+  <sys:String x:Key="AppTitle">Fusilone Gearbase Device Management</sys:String>
   <sys:String x:Key="AppSubtitle">Inventory Management</sys:String>
   <sys:String x:Key="Menu_Dashboard">Dashboard</sys:String>
   <sys:String x:Key="Menu_DeviceSearch">Device Search</sys:String>
@@ -27,6 +27,13 @@
   <sys:String x:Key="Stat_TotalValue">Total Value</sys:String>
   <sys:String x:Key="Inventory_List">INVENTORY LIST</sys:String>
   <sys:String x:Key="Device_Distribution">DEVICE DISTRIBUTION</sys:String>
+  <sys:String x:Key="Chart_NeedTwoCategories">At least 2 categories are required for the chart</sys:String>
+  <sys:String x:Key="Empty_Inventory_Title">No devices yet</sys:String>
+  <sys:String x:Key="Empty_Inventory_Desc">Start building your inventory by adding your first device.</sys:String>
+  <sys:String x:Key="Empty_Inventory_Cta">Add New Device</sys:String>
+  <sys:String x:Key="Empty_Filtered">No matching devices</sys:String>
+  <sys:String x:Key="Empty_Filtered_Desc">Try adjusting your search or filter criteria.</sys:String>
+  <sys:String x:Key="Detail_WindowTitle">Device Details</sys:String>
   <sys:String x:Key="Search_Hint">Search...</sys:String>
   <sys:String x:Key="Customers_Title">CUSTOMERS</sys:String>
   <sys:String x:Key="Customers_Search">Search customers...</sys:String>
@@ -47,7 +54,7 @@
   <sys:String x:Key="Kanban_Pending">PENDING / INACTIVE</sys:String>
   <sys:String x:Key="Kanban_InProgress">IN PROGRESS / FAULTY</sys:String>
   <sys:String x:Key="Kanban_Ready">READY / ACTIVE</sys:String>
-  <sys:String x:Key="VersionLabel">v0.9.3 Beta</sys:String>
+  <sys:String x:Key="VersionLabel">V1.0.0 Final</sys:String>
   <sys:String x:Key="Col_Id">ID</sys:String>
   <sys:String x:Key="Col_Type">TYPE</sys:String>
   <sys:String x:Key="Col_BrandModel">BRAND MODEL</sys:String>
@@ -148,19 +155,21 @@
   <sys:String x:Key="Warranty_Expired">Expired</sys:String>
   <sys:String x:Key="About_Tab_About">ABOUT</sys:String>
   <sys:String x:Key="About_Tab_Release">RELEASE NOTES</sys:String>
-  <sys:String x:Key="About_Title">FUSILONE</sys:String>
+  <sys:String x:Key="About_Title">FUSILONE GEARBASE</sys:String>
   <sys:String x:Key="About_Subtitle">Device Management System</sys:String>
-  <sys:String x:Key="About_Version">v0.9.3 (Beta Release)</sys:String>
+  <sys:String x:Key="About_Version">V1.0.0 (Final Release)</sys:String>
   <sys:String x:Key="About_Developer">DEVELOPER</sys:String>
   <sys:String x:Key="About_Contributors">CONTRIBUTORS &amp; TEST TEAM</sys:String>
-  <sys:String x:Key="About_ReleaseTitle">v0.9.3 Beta - What's New</sys:String>
-  <sys:String x:Key="About_ReleaseNote1">• Fixed the layout issue on the Add Device page. The form now fits the main content area and full screen more cleanly.</sys:String>
-  <sys:String x:Key="About_ReleaseNote2">• Device date handling was improved: system entry date and manufacture date were added. You can find these fields in the Finance &amp; Maintenance section on the Add Device page.</sys:String>
-  <sys:String x:Key="About_ReleaseNote3">• Warranty Tracking was added: the system calculates a 24-month warranty period based on purchase date first, then manufacture date, then system entry date as fallback (user-adjustable duration). The result is shown in Device Details.</sys:String>
-  <sys:String x:Key="About_ReleasePrev">v0.9.2 Final - Previous Release</sys:String>
-  <sys:String x:Key="About_ReleasePrevDesc">• Included UI improvements, English language support, advanced search, detailed device updates, QR code optimization, customer management, backup/export features, and the extras notes area.</sys:String>
-  <sys:String x:Key="About_ReleasePrev2">v0.9.1 Beta - Previous Release</sys:String>
-  <sys:String x:Key="About_ReleasePrev2Desc">• Responsive layout, theme support, AO category, and QR label revision.</sys:String>
+  <sys:String x:Key="About_ReleaseTitle">V1.0.0 - What's New</sys:String>
+  <sys:String x:Key="About_ReleaseNote1">• The application name "Fusilone" was changed to "Fusilone Gearbase".</sys:String>
+  <sys:String x:Key="About_ReleaseNote2">• The design language was completely overhauled, resulting in a more pleasant look in both light and dark modes. The logo, menus, and all other visual elements were refreshed.</sys:String>
+  <sys:String x:Key="About_ReleaseNote3">• Extensive code cleanup was performed under the hood; performance and security issues were resolved.</sys:String>
+  <sys:String x:Key="About_ReleasePrev">v0.9.3 Beta - Previous Release</sys:String>
+  <sys:String x:Key="About_ReleasePrevDesc">• Add Device page layout fix, system entry and manufacture date fields, 24-month warranty tracking with a warranty badge.</sys:String>
+  <sys:String x:Key="About_ReleasePrev2">v0.9.2 Final - Previous Release</sys:String>
+  <sys:String x:Key="About_ReleasePrev2Desc">• Included UI improvements, English language support, advanced search, detailed device updates, QR code optimization, customer management, backup/export features, and the extras notes area.</sys:String>
+  <sys:String x:Key="About_ReleasePrev3">v0.9.1 Beta - Previous Release</sys:String>
+  <sys:String x:Key="About_ReleasePrev3Desc">• Responsive layout, theme support, AO category, and QR label revision.</sys:String>
   <sys:String x:Key="About_Copyright">All rights reserved © 2026</sys:String>
   <sys:String x:Key="About_Close">GOT IT</sys:String>
 </ResourceDictionary>

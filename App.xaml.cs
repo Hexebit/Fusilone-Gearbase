@@ -25,11 +25,14 @@ public partial class App : Application
         
         AppDomain.CurrentDomain.UnhandledException += (s, ex) =>
         {
+            Log.Fatal("Kritik Hata (AppDomain): {Exception}", ex.ExceptionObject);
+            Log.CloseAndFlush();
             MessageBox.Show($"Kritik Hata (AppDomain): {ex.ExceptionObject}");
         };
 
         this.DispatcherUnhandledException += (s, ex) =>
         {
+            Log.Error(ex.Exception, "Uygulama Hatası (Dispatcher)");
             MessageBox.Show($"Uygulama Hatası (Dispatcher): {ex.Exception.Message}");
             ex.Handled = true;
         };
